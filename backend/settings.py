@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
