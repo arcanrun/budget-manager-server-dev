@@ -1,1 +1,1 @@
-web: gunicorn picsaver.wsgi --log-file -
+web: gunicorn server.wsgi --log-file -
