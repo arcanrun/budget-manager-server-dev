@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 from .models import Vkuser, History
 import datetime
 
-from .helpers import get_updated_data, make_calculations, costsPattern, history_saver, next_pay_day
+from .helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day
 
 import json
 
@@ -36,7 +36,7 @@ def add_budget(request):
         for field in all_users:
             if (vk_id == field.id_vk):
 
-                resArr = make_calculations(
+                resArr = make_calculations_full(
                     field.common, field.fun, field.invest, field.days_to_payday, budget)
                 Vkuser.objects.filter(id_vk=vk_id).update(
                     budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
@@ -200,12 +200,17 @@ def temp_today_cost(request):
 
             if operation == 'plus':
                 newBudget = float(field.budget) + value
+                costsObject[typeCost]['value'] = round(
+                    costsObject[typeCost]['value'] + value, 2)
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] + value, 2)
             if operation == 'minus':
                 newBudget = float(field.budget) - value
+                costsObject[typeCost]['value'] = round(
+                    costsObject[typeCost]['value'] - value, 2)
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] - value, 2)
+
             history_saver(field.id_vk, date_now, operation, value, typeCost)
 
             Vkuser.objects.filter(id_vk=vk_id).update(

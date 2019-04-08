@@ -6,6 +6,7 @@ import calendar
 import json
 
 costsPattern = json.dumps({
+    "value": "",
     "maxToday": "",
     "temp": ""
 })
@@ -45,6 +46,33 @@ def make_calculations(field_common, filed_fun, file_invest, daysToPayday, budget
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
+
+    commonObject["maxToday"] = round(
+        float(commonObject['value']) / int(daysToPayday), 2)
+    funObject["maxToday"] = round(
+        float(funObject['value']) / int(daysToPayday), 2)
+    investObject["maxToday"] = round(
+        float(investObject['value']) / int(daysToPayday), 2)
+
+    commonObject["temp"] = commonObject["maxToday"]
+    funObject["temp"] = funObject["maxToday"]
+    investObject["temp"] = investObject["maxToday"]
+
+    commonObjectJSON = json.dumps(commonObject)
+    funObjectJSON = json.dumps(funObject)
+    investObjectJSON = json.dumps(investObject)
+    return [commonObjectJSON, funObjectJSON, investObjectJSON]
+
+
+def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, budget):
+
+    commonObject = json.loads(field_common)
+    funObject = json.loads(filed_fun)
+    investObject = json.loads(file_invest)
+
+    commonObject['value'] = round((float(budget) * 0.5), 2)
+    funObject['value'] = round((float(budget) * 0.3), 2)
+    investObject['value'] = round((float(budget) * 0.2), 2)
 
     commonObject["maxToday"] = round((
         float(budget) * 0.5) / int(daysToPayday), 2)
