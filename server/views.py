@@ -224,6 +224,9 @@ def temp_today_cost(request):
                     elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
                         costsObject['common']['value'] = round(
                             costsObject['common']['value'] - value, 2)
+                    elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0 and (costsObject['common']['value'] - value) < 0:
+                        costsObject['fun']['value'] = round(
+                            costsObject['fun']['value'] - value, 2)
 
                 newBudget = float(field.budget) - value
                 costsObject[typeCost]['value'] = res
