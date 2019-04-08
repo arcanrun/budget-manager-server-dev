@@ -205,9 +205,28 @@ def temp_today_cost(request):
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] + value, 2)
             if operation == 'minus':
-                newBudget = float(field.budget) - value
-                costsObject[typeCost]['value'] = round(
+                res = costsObject[typeCost]['value'] = round(
                     costsObject[typeCost]['value'] - value, 2)
+
+                if res < 0:
+                    if typeCost == 'common' and (costsObject['fun']['value'] - value) > 0 or typeCost == 'invest' and (costsObject['fun']['value'] - value) > 0:
+                        costsObject['fun']['value'] = round(
+                            costsObject['fun']['value'] - value, 2)
+                    elif typeCost == 'common' and (costsObject['fun']['value'] - value) < 0:
+                        costsObject['invest']['value'] = round(
+                            costsObject['invest']['value'] - value, 2)
+                    elif typeCost == 'fun' and (costsObject['common']['value'] - value) > 0:
+                        costsObject['common']['value'] = round(
+                            costsObject['common']['value'] - value, 2)
+                    elif typeCost == 'fun' and (costsObject['common']['value'] - value) < 0:
+                        costsObject['invest']['value'] = round(
+                            costsObject['invest']['value'] - value, 2)
+                    elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
+                        costsObject['common']['value'] = round(
+                            costsObject['common']['value'] - value, 2)
+
+                newBudget = float(field.budget) - value
+                costsObject[typeCost]['value'] = res
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] - value, 2)
 
