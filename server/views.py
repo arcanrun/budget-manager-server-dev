@@ -62,7 +62,7 @@ def add_payday(request):
     for field in all_users:
         if (vk_id == field.id_vk):
 
-            resArr = make_calculations(
+            resArr = make_calculations_full(
                 field.common, field.fun, field.invest, days_to_payday,  field.budget)
 
             Vkuser.objects.filter(id_vk=vk_id).update(
