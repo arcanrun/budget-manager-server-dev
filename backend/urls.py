@@ -29,4 +29,5 @@ urlpatterns = [
     path('get-history/', views.get_history),
     path('profile-manage/', views.profile_manage),
     path('get-statistics/', views.get_statistics),
+    path('calc-budget/', views.calc_budget),
 ]
