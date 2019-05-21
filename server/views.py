@@ -49,6 +49,7 @@ def add_budget(request):
 
 
 def calc_budget(request):
+    
     response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
     req = json.loads(str(request.body, encoding='utf-8'))
     print('[calc_budget:RECIVED]-->', req)
