@@ -49,7 +49,7 @@ def add_budget(request):
 
 
 def calc_budget(request):
-    
+
     response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
     req = json.loads(str(request.body, encoding='utf-8'))
     print('[calc_budget:RECIVED]-->', req)
@@ -60,30 +60,30 @@ def calc_budget(request):
     date_now = req['date_now']
     type = req['type']
 
-
     all_users = Vkuser.objects.all()
     for field in all_users:
         if (vk_id == field.id_vk):
             budget = float(field.budget)
-            if (operation=='minus'):
+            if (operation == 'minus'):
                 budget -= value
-        
-            if (operation=='plus'):
+
+            if (operation == 'plus'):
                 budget += value
-            
+
             resArr = make_calculations_full(
-                    field.common, field.fun, field.invest, field.days_to_payday, budget)
+                field.common, field.fun, field.invest, field.days_to_payday, budget)
             Vkuser.objects.filter(id_vk=vk_id).update(
-                    budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
+                budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
 
             history_saver(field.id_vk, date_now, operation, value, type)
-            break;
-    
+            break
 
     response = get_updated_data(vk_id)
     print('[calc_budget:RESPONSE]-->', response)
 
     return JsonResponse(response)
+
+
 def add_payday(request):
     req = json.loads(str(request.body, encoding='utf-8'))
     print('[add_payday:RECIVED]-->', req)
@@ -240,6 +240,11 @@ def temp_today_cost(request):
                     costsObject[typeCost]['value'] + value, 2)
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] + value, 2)
+
+                costsObject['common'] = json.dumps(costsObject['common'])
+                costsObject['fun'] = json.dumps(costsObject['fun'])
+                costsObject['invest'] = json.dumps(costsObject['invest'])
+
             if operation == 'minus':
                 res = costsObject[typeCost]['value'] = round(
                     costsObject[typeCost]['value'] - value, 2)
@@ -269,10 +274,30 @@ def temp_today_cost(request):
                 costsObject[typeCost]['temp'] = round(
                     costsObject[typeCost]['temp'] - value, 2)
 
-            history_saver(field.id_vk, date_now, operation, value, typeCost)
+                costsObject['common'] = json.dumps(costsObject['common'])
+                costsObject['fun'] = json.dumps(costsObject['fun'])
+                costsObject['invest'] = json.dumps(costsObject['invest'])
 
+            if operation == 'transfer':
+                transfer_to = str(req['transfer_to'])
+
+                costsObject[typeCost]['value'] = round(
+                    costsObject[typeCost]['value'] - value, 2)
+
+                costsObject[transfer_to]['value'] = round(
+                    costsObject[transfer_to]['value'] + value, 2)
+
+                calc = make_calculations(
+                    json.dumps(costsObject["common"]),  json.dumps(costsObject["fun"]),  json.dumps(costsObject["invest"]), field.days_to_payday, field.budget)
+
+                costsObject['common'] = calc[0]
+                costsObject['fun'] = calc[1]
+                costsObject['invest'] = calc[2]
+                newBudget = float(field.budget)
+
+            history_saver(field.id_vk, date_now, operation, value, typeCost)
             Vkuser.objects.filter(id_vk=vk_id).update(
-                budget=round(newBudget, 2), common=json.dumps(costsObject["common"]), fun=json.dumps(costsObject["fun"]), invest=json.dumps(costsObject["invest"]))
+                budget=round(newBudget, 2), common=costsObject["common"], fun=costsObject["fun"], invest=costsObject["invest"])
             break
 
     response = get_updated_data(vk_id)
