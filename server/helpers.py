@@ -66,6 +66,8 @@ def make_calculations(field_common, filed_fun, file_invest, daysToPayday, budget
 
 def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, budget):
 
+    daysToPayday = int(daysToPayday)
+
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
@@ -74,12 +76,17 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     funObject['value'] = round((float(budget) * 0.3), 2)
     investObject['value'] = round((float(budget) * 0.2), 2)
 
-    commonObject["maxToday"] = round((
-        float(budget) * 0.5) / int(daysToPayday), 2)
-    funObject["maxToday"] = round((
-        float(budget) * 0.3) / int(daysToPayday), 2)
-    investObject["maxToday"] = round((
-        float(budget) * 0.2) / int(daysToPayday), 2)
+    if daysToPayday == 0:
+        commonObject["maxToday"] = commonObject['value']
+        funObject["maxToday"] = funObject['value']
+        investObject["maxToday"] = investObject['value']
+    else:
+        commonObject["maxToday"] = round((
+            float(budget) * 0.5) / daysToPayday, 2)
+        funObject["maxToday"] = round((
+            float(budget) * 0.3) / daysToPayday, 2)
+        investObject["maxToday"] = round((
+            float(budget) * 0.2) / daysToPayday, 2)
 
     commonObject["temp"] = commonObject["maxToday"]
     funObject["temp"] = funObject["maxToday"]

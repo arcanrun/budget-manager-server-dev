@@ -315,7 +315,7 @@ def get_history(request):
     history = History.objects.all()
     history_object = {}
     tempArr = []
-    cost_object = {'type_cost': '', 'operation': '', 'value': ''}
+    cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
 
     for field in history:
         if (vk_id == field.id_vk):
@@ -323,17 +323,18 @@ def get_history(request):
                 cost_object['type_cost'] = field.type_costs
                 cost_object['value'] = field.value
                 cost_object['operation'] = field.operation
-
+                cost_object['id'] = field.id
             else:
                 history_object[field.date] = []
 
                 cost_object['type_cost'] = field.type_costs
                 cost_object['value'] = field.value
                 cost_object['operation'] = field.operation
+                cost_object['id'] = field.id
 
             history_object[field.date].append(cost_object)
 
-            cost_object = {'type_cost': '', 'operation': '', 'value': ''}
+            cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
 
     for k, v in history_object.items():
         v.reverse()
