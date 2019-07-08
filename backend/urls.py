@@ -20,14 +20,14 @@ from server import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('add-budget/', views.add_budget),
+    path('add-or-change-budget/', views.add_or_change_budget),
     path('add-payday/', views.add_payday),
-    path('get-costs-all/', views.get_costs_all),
+    path('manager-page/', views.manager_page),
     path('temp-today-cost/', views.temp_today_cost),
     path('log-in/', views.log_in),
     path('sign-up/', views.sign_up),
-    path('get-history/', views.get_history),
+    path('history-page/', views.history_page),
     path('profile-manage/', views.profile_manage),
-    path('get-statistics/', views.get_statistics),
+    path('profile_page/', views.profile_page),
     path('calc-budget/', views.calc_budget),
 ]

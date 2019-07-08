@@ -1,419 +1,62 @@
 from django.shortcuts import render
-from .models import Vkuser
 from django.http import JsonResponse
 from django.contrib.auth.models import User, Group
 from .models import Vkuser, History
 import datetime
+import json
 
 from .helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day
 
-import json
+from .calculations.plus_or_minus_budget import plus_or_minus_budget
+from .calculations.first_add_or_change_budget import first_add_or_change_budget
+from .calculations.set_new_pay_date import set_new_pay_date
+from .calculations.plus_minus_transfer_for_50_30_20 import plus_minus_transfer_for_50_30_20
 
+from .auth.log_in_by_vk_id import log_in_by_vk_id
+from .auth.sign_up_by_vk_id import sign_up_by_vk_id
 
-def add_budget(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
+from .staistics.get_costs_all import get_costs_all
+from .staistics.get_history import get_history
+from .staistics.get_stat_for_current_month import get_stat_for_current_month
 
-    vk_id = str(req['vk_id'])
-    budget = round(float(req['budget']), 2)
-    operation = str(req['operation'])
-
-    all_users = Vkuser.objects.all()
-
-    if operation == 'add':
-        print('[add_budget:RECIVED]-->', req)
-        for field in all_users:
-            if (vk_id == field.id_vk):
-                Vkuser.objects.filter(id_vk=vk_id).update(
-                    budget=budget)
-                break
-        response = get_updated_data(vk_id)
-        print('[add_budget:RESPONSE]-->', response)
-        return JsonResponse(response)
-
-    if operation == 'change':
-        print('[change_budget:RECIVED]-->', req)
-        daysToPayday = req['daysToPayday']
-        for field in all_users:
-            if (vk_id == field.id_vk):
-
-                resArr = make_calculations_full(
-                    field.common, field.fun, field.invest, field.days_to_payday, budget)
-                Vkuser.objects.filter(id_vk=vk_id).update(
-                    budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
-                break
-        response = get_updated_data(vk_id)
-        response['TEST'] = resArr
-        print('[change_budget:RESPONSE]-->', response)
-
-        return JsonResponse(response)
-
-
-def calc_budget(request):
-
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[calc_budget:RECIVED]-->', req)
-
-    vk_id = str(req['vk_id'])
-    value = round(float(req['value']), 2)
-    operation = req['operation']
-    date_now = req['date_now']
-    type = req['type']
-
-    all_users = Vkuser.objects.all()
-    for field in all_users:
-        if (vk_id == field.id_vk):
-            budget = float(field.budget)
-            if (operation == 'minus'):
-                budget -= value
-
-            if (operation == 'plus'):
-                budget += value
-
-            resArr = make_calculations_full(
-                field.common, field.fun, field.invest, field.days_to_payday, budget)
-            Vkuser.objects.filter(id_vk=vk_id).update(
-                budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
-
-            history_saver(field.id_vk, date_now, operation, value, type)
-            break
-
-    response = get_updated_data(vk_id)
-    print('[calc_budget:RESPONSE]-->', response)
-
-    return JsonResponse(response)
-
-
-def add_payday(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[add_payday:RECIVED]-->', req)
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
-
-    vk_id = str(req['vk_id'])
-    pay_day = str(req['payday'])
-    days_to_payday = int(req['days_to_payday'])
-
-    all_users = Vkuser.objects.all()
-
-    for field in all_users:
-        if (vk_id == field.id_vk):
-
-            resArr = make_calculations_full(
-                field.common, field.fun, field.invest, days_to_payday,  field.budget)
-
-            Vkuser.objects.filter(id_vk=vk_id).update(
-                pay_day=pay_day, days_to_payday=days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2])
-            break
-
-    response = get_updated_data(vk_id)
-    response['TEST'] = resArr
-    print('[add_payday:RESPONSE]-->', response)
-
-    return JsonResponse(response)
-
-
-def get_costs_all(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[get_costs_all:RECIVED]-->', req)
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': {
-    }}
-    vk_id = str(req['vk_id'])
-    toDay = datetime.datetime.strptime(req['toDay'][:10], '%Y-%m-%d')
-    daysToPayday_check = 0
-
-    all_users = Vkuser.objects.all()
-    for field in all_users:
-        if (vk_id == field.id_vk):
-            pay_day_formated = field.pay_day[:10]
-            if pay_day_formated != "":  # checker for first time user has been logged in
-                daysToPayday_check = (datetime.datetime.strptime(
-                    pay_day_formated, '%Y-%m-%d') - toDay)
-                daysToPayday_check = daysToPayday_check.days
-
-                if daysToPayday_check != int(field.days_to_payday):
-                    if daysToPayday_check <= 0:
-                        next_payday = next_pay_day(field.pay_day)
-                        next_daysToPay = next_payday - toDay
-                        next_daysToPay = next_daysToPay.days
-                        print('-------------------', next_daysToPay)
-                        Vkuser.objects.filter(id_vk=vk_id).update(
-                            days_to_payday=next_daysToPay, pay_day=next_payday)
-                        daysToPayday_check = next_daysToPay
-                    else:
-                        Vkuser.objects.filter(id_vk=vk_id).update(
-                            days_to_payday=daysToPayday_check)
-
-                    resArr = make_calculations(
-                        field.common, field.fun, field.invest, daysToPayday_check,  field.budget)
-
-                    Vkuser.objects.filter(id_vk=vk_id).update(
-                        common=resArr[0], fun=resArr[1], invest=resArr[2])
-                    break
-
-    response = get_updated_data(vk_id)
-    print('[get_costs_all:RESPONSE]-->', response)
-    return JsonResponse(response)
+from .profile.profile_settings import profile_settings
 
 
 def log_in(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[log_in:RECIVED]-->', req)
-
-    vk_id = str(req['vk_id'])
-    name = str(req['name'])
-    sure_name = str(req['sure_name'])
-    avatar = str(req['avatar'])
-
-    response = {'RESPONSE': 'LOGIN_ERROR', 'PAYLOAD': {}
-                }
-
-    all_users = Vkuser.objects.all()
-    for field in all_users:
-        if (vk_id == field.id_vk):
-            response['RESPONSE'] = 'ALREADY_HERE'
-            response['PAYLOAD']['vk_id'] = field.id_vk
-            response['PAYLOAD']['name'] = name
-            response['PAYLOAD']['sure_name'] = sure_name
-            response['PAYLOAD']['avatar'] = avatar
-
-            print('[log_in:RESPONSE]-->', response)
-            return JsonResponse(response)
-
-    # user = Vkuser(id_vk=vk_id, common=costsPattern,
-    #               fun=costsPattern, invest=costsPattern)
-    # user.save()
-
-    print('[log_in:RESPONSE]-->', response)
-
-    return JsonResponse(response)
+    return log_in_by_vk_id(request)
 
 
 def sign_up(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
-    response = {'RESPONSE': 'SIGN_UP_ERROR', 'PAYLOAD': False
-                }
+    return sign_up_by_vk_id(request)
 
-    vk_id = str(req['vk_id'])
-    name = str(req['name'])
-    sure_name = str(req['sure_name'])
-    avatar = str(req['avatar'])
-    register_date = req['toDay']
 
-    print('[sign_up:RECIVED]-->', req)
-    user = Vkuser(id_vk=vk_id, common=costsPattern,
-                  fun=costsPattern, invest=costsPattern, register_date=register_date)
-    user.save()
+def add_or_change_budget(request):
+    return first_add_or_change_budget(request)
 
-    response['RESPONSE'] = 'SIGN_UP_SUCCESS'
-    response['PAYLOAD'] = {}
-    response['PAYLOAD']['vk_id'] = vk_id
-    response['PAYLOAD']['name'] = name
-    response['PAYLOAD']['sure_name'] = sure_name
-    response['PAYLOAD']['avatar'] = avatar
 
-    print('[sign_up:RESPONSE]-->', response)
-    return JsonResponse(response)
+def calc_budget(request):
+    return plus_or_minus_budget(request)
+
+
+def add_payday(request):
+    return set_new_pay_date(request)
+
+
+def manager_page(request):
+    return get_costs_all(request)
 
 
 def temp_today_cost(request):
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[temp_today_cost:RECIVED]-->', req)
-
-    vk_id = str(req['vk_id'])
-    typeCost = req['type']
-    value = round(float(req['value']), 2)
-    operation = req['operation']
-    date_now = req['date_now']
-    newBudget = ''
-    costsObject = {}
-    all_users = Vkuser.objects.all()
-    for field in all_users:
-        if (vk_id == field.id_vk):
-
-            costsObject["common"] = json.loads(field.common)
-            costsObject["fun"] = json.loads(field.fun)
-            costsObject["invest"] = json.loads(field.invest)
-
-            if operation == 'plus':
-                newBudget = float(field.budget) + value
-                costsObject[typeCost]['value'] = round(
-                    costsObject[typeCost]['value'] + value, 2)
-                costsObject[typeCost]['temp'] = round(
-                    costsObject[typeCost]['temp'] + value, 2)
-
-                costsObject['common'] = json.dumps(costsObject['common'])
-                costsObject['fun'] = json.dumps(costsObject['fun'])
-                costsObject['invest'] = json.dumps(costsObject['invest'])
-
-            if operation == 'minus':
-                res = costsObject[typeCost]['value'] = round(
-                    costsObject[typeCost]['value'] - value, 2)
-
-                if res < 0:
-                    if typeCost == 'common' and (costsObject['fun']['value'] - value) > 0 or typeCost == 'invest' and (costsObject['fun']['value'] - value) > 0:
-                        costsObject['fun']['value'] = round(
-                            costsObject['fun']['value'] - value, 2)
-                    elif typeCost == 'common' and (costsObject['fun']['value'] - value) < 0:
-                        costsObject['invest']['value'] = round(
-                            costsObject['invest']['value'] - value, 2)
-                    elif typeCost == 'fun' and (costsObject['common']['value'] - value) > 0:
-                        costsObject['common']['value'] = round(
-                            costsObject['common']['value'] - value, 2)
-                    elif typeCost == 'fun' and (costsObject['common']['value'] - value) < 0:
-                        costsObject['invest']['value'] = round(
-                            costsObject['invest']['value'] - value, 2)
-                    elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
-                        costsObject['common']['value'] = round(
-                            costsObject['common']['value'] - value, 2)
-                    elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0 and (costsObject['common']['value'] - value) < 0:
-                        costsObject['fun']['value'] = round(
-                            costsObject['fun']['value'] - value, 2)
-
-                newBudget = float(field.budget) - value
-                costsObject[typeCost]['value'] = res
-                costsObject[typeCost]['temp'] = round(
-                    costsObject[typeCost]['temp'] - value, 2)
-
-                costsObject['common'] = json.dumps(costsObject['common'])
-                costsObject['fun'] = json.dumps(costsObject['fun'])
-                costsObject['invest'] = json.dumps(costsObject['invest'])
-
-            if operation == 'transfer':
-                transfer_to = str(req['transfer_to'])
-
-                costsObject[typeCost]['value'] = round(
-                    costsObject[typeCost]['value'] - value, 2)
-
-                costsObject[transfer_to]['value'] = round(
-                    costsObject[transfer_to]['value'] + value, 2)
-
-                calc = make_calculations(
-                    json.dumps(costsObject["common"]),  json.dumps(costsObject["fun"]),  json.dumps(costsObject["invest"]), field.days_to_payday, field.budget)
-
-                costsObject['common'] = calc[0]
-                costsObject['fun'] = calc[1]
-                costsObject['invest'] = calc[2]
-                newBudget = float(field.budget)
-
-            history_saver(field.id_vk, date_now, operation, value, typeCost)
-            Vkuser.objects.filter(id_vk=vk_id).update(
-                budget=round(newBudget, 2), common=costsObject["common"], fun=costsObject["fun"], invest=costsObject["invest"])
-            break
-
-    response = get_updated_data(vk_id)
-    print('[temp_today_cost:RESPONSE]-->', response)
-
-    return JsonResponse(response)
+    return plus_minus_transfer_for_50_30_20(request)
 
 
-def get_history(request):
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': []}
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[get_history:RECIVED]-->', req)
-    vk_id = str(req['vk_id'])
-
-    history = History.objects.all()
-    history_object = {}
-    tempArr = []
-    cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
-
-    for field in history:
-        if (vk_id == field.id_vk):
-            if field.date in history_object:
-                cost_object['type_cost'] = field.type_costs
-                cost_object['value'] = field.value
-                cost_object['operation'] = field.operation
-                cost_object['id'] = field.id
-            else:
-                history_object[field.date] = []
-
-                cost_object['type_cost'] = field.type_costs
-                cost_object['value'] = field.value
-                cost_object['operation'] = field.operation
-                cost_object['id'] = field.id
-
-            history_object[field.date].append(cost_object)
-
-            cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
-
-    for k, v in history_object.items():
-        v.reverse()
-        response['PAYLOAD'].append({k: v})
-    response['PAYLOAD'].reverse()
-    response['RESPONSE'] = 'SUCCESS'
-
-    print('[get_history:RESPONSE]-->', response)
-
-    return JsonResponse(response)
+def history_page(request):
+    return get_history(request)
 
 
 def profile_manage(request):
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': 'ERROR'}
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[profile_manage:RECIVED]-->', req)
-
-    vk_id = str(req['vk_id'])
-    operation = req['operationType']
-
-    all_users = Vkuser.objects.all()
-    history = History.objects.all()
-
-    if operation == 'delete':
-        for field in all_users:
-            if (vk_id == field.id_vk):
-                Vkuser.objects.filter(id_vk=vk_id).delete()
-        for field in history:
-            if (vk_id == field.id_vk):
-                History.objects.filter(id_vk=vk_id).delete()
-        response = {'RESPONSE': 'DELETE_USER_SUCCESS',
-                    'PAYLOAD': 'DELETE_USER_SUCCESS'}
-    print('[profile_manage:RESPONSE]-->', response)
-    return JsonResponse(response)
+    return profile_settings(request)
 
 
-def get_statistics(request):
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
-    req = json.loads(str(request.body, encoding='utf-8'))
-    print('[get_statistics:RECIVED]-->', req)
-
-    vk_id = str(req['vk_id'])
-
-    toDayMonth = req['toDayFormated'][3:]
-    costs = {
-        'total': 0,
-        'common': 0,
-        'fun': 0,
-        'invest': 0,
-    }
-    income = {
-        'total': 0,
-        'common': 0,
-        'fun': 0,
-        'invest': 0,
-    }
-
-    history = History.objects.all()
-    for field in history:
-        if (vk_id == field.id_vk and field.date[3:] == toDayMonth):
-            if field.operation == 'minus':
-                costs['total'] += float(field.value)
-                if field.type_costs == 'common':
-                    costs['common'] += float(field.value)
-                if field.type_costs == 'fun':
-                    costs['fun'] += float(field.value)
-                if field.type_costs == 'invest':
-                    costs['invest'] += float(field.value)
-            if field.operation == 'plus':
-                income['total'] += float(field.value)
-                if field.type_costs == 'common':
-                    income['common'] += float(field.value)
-                if field.type_costs == 'fun':
-                    income['fun'] += float(field.value)
-                if field.type_costs == 'invest':
-                    income['invest'] += float(field.value)
-    response['RESPONSE'] = 'FETCHED_STATISTICS_SUCCESS'
-    response['PAYLOAD']['costs'] = costs
-    response['PAYLOAD']['income'] = income
-
-    print('[get_statistics:RESPONSE]-->', response)
-    return JsonResponse(response)
+def profile_page(request):
+    return get_stat_for_current_month(request)
