@@ -42,17 +42,24 @@ def next_pay_day(current_pay_day):
 
 
 def make_calculations(field_common, filed_fun, file_invest, daysToPayday, budget):
+    # difference between make_calcualtions and make_caculations_full?
+    daysToPayday = int(daysToPayday)
 
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
 
-    commonObject["maxToday"] = round(
-        float(commonObject['value']) / int(daysToPayday), 2)
-    funObject["maxToday"] = round(
-        float(funObject['value']) / int(daysToPayday), 2)
-    investObject["maxToday"] = round(
-        float(investObject['value']) / int(daysToPayday), 2)
+    if daysToPayday == 0:
+        commonObject["maxToday"] = commonObject['value']
+        funObject["maxToday"] = funObject['value']
+        investObject["maxToday"] = investObject['value']
+    else:
+        commonObject["maxToday"] = round((
+            float(budget) * 0.5) / daysToPayday, 2)
+        funObject["maxToday"] = round((
+            float(budget) * 0.3) / daysToPayday, 2)
+        investObject["maxToday"] = round((
+            float(budget) * 0.2) / daysToPayday, 2)
 
     commonObject["temp"] = commonObject["maxToday"]
     funObject["temp"] = funObject["maxToday"]
