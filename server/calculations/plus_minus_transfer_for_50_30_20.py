@@ -11,7 +11,7 @@ from ..helpers import get_updated_data, make_calculations, make_calculations_ful
 
 def plus_minus_transfer_for_50_30_20(request):
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[temp_today_cost:RECIVED]-->', req)
+    print('[plus_minus_transfer_for_50_30_20:RECIVED]-->', req)
 
     vk_id = str(req['vk_id'])
     typeCost = req['type']
@@ -88,6 +88,7 @@ def plus_minus_transfer_for_50_30_20(request):
                 costsObject['fun'] = calc[1]
                 costsObject['invest'] = calc[2]
                 newBudget = float(field.budget)
+                print('===============+>', costsObject)
 
             history_saver(field.id_vk, date_now, operation, value, typeCost)
             Vkuser.objects.filter(id_vk=vk_id).update(
@@ -95,6 +96,6 @@ def plus_minus_transfer_for_50_30_20(request):
             break
 
     response = get_updated_data(vk_id)
-    print('[temp_today_cost:RESPONSE]-->', response)
+    print('[plus_minus_transfer_for_50_30_20:RESPONSE]-->', response)
 
     return JsonResponse(response)

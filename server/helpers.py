@@ -41,13 +41,18 @@ def next_pay_day(current_pay_day):
     return datetime.datetime(year, month, day)
 
 
-def make_calculations(field_common, filed_fun, file_invest, daysToPayday, budget):
-    # difference between make_calcualtions and make_caculations_full?
+def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budget):
+    """difference between make_calcualtions and make_caculations_full 
+    IS that make_calculations is for temp costs only and FULL is for relodaing all"""
     daysToPayday = int(daysToPayday)
 
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
-    investObject = json.loads(file_invest)
+    investObject = json.loads(filed_invest)
+
+    common = commonObject['value']
+    fun = funObject['value']
+    invest = investObject['value']
 
     if daysToPayday == 0:
         commonObject["maxToday"] = commonObject['value']
@@ -55,11 +60,11 @@ def make_calculations(field_common, filed_fun, file_invest, daysToPayday, budget
         investObject["maxToday"] = investObject['value']
     else:
         commonObject["maxToday"] = round((
-            float(budget) * 0.5) / daysToPayday, 2)
+            float(common)) / daysToPayday, 2)
         funObject["maxToday"] = round((
-            float(budget) * 0.3) / daysToPayday, 2)
+            float(fun)) / daysToPayday, 2)
         investObject["maxToday"] = round((
-            float(budget) * 0.2) / daysToPayday, 2)
+            float(invest) * 0.2) / daysToPayday, 2)
 
     commonObject["temp"] = commonObject["maxToday"]
     funObject["temp"] = funObject["maxToday"]
@@ -82,7 +87,6 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     commonObject['value'] = round((float(budget) * 0.5), 2)
     funObject['value'] = round((float(budget) * 0.3), 2)
     investObject['value'] = round((float(budget) * 0.2), 2)
-
     if daysToPayday == 0:
         commonObject["maxToday"] = commonObject['value']
         funObject["maxToday"] = funObject['value']
