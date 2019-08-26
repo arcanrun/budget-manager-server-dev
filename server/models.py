@@ -23,6 +23,7 @@ class Vkuser(models.Model):
     invest = models.TextField(max_length=1000)
     days_to_payday = models.TextField(max_length=100, blank=True)
     register_date = models.TextField(max_length=100,  blank=True)
+    is_tutorial_done = models.BooleanField(default=False)
 
     def __str__(self):
         return 'id_vk--->%s || budget--->%s' % (self.id_vk, self.budget)

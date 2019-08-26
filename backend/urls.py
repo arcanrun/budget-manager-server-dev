@@ -30,4 +30,5 @@ urlpatterns = [
     path('profile-manage/', views.profile_manage),
     path('profile_page/', views.profile_page),
     path('calc-budget/', views.calc_budget),
+    path('tutorial-state/', views.tutorial_state),
 ]

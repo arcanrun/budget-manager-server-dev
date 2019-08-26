@@ -49,5 +49,6 @@ def get_costs_all(request):
                     break
 
     response = get_updated_data(vk_id)
+
     print('[get_costs_all:RESPONSE]-->', response)
     return JsonResponse(response)

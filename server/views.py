@@ -21,6 +21,8 @@ from .staistics.get_stat_for_current_month import get_stat_for_current_month
 
 from .profile.profile_settings import profile_settings
 
+from .profile.change_tutorial_state import change_tutorial_state
+
 
 def log_in(request):
     return log_in_by_vk_id(request)
@@ -60,3 +62,7 @@ def profile_manage(request):
 
 def profile_page(request):
     return get_stat_for_current_month(request)
+
+
+def tutorial_state(request):
+    return change_tutorial_state(request)
