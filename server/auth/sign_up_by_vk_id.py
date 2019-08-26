@@ -26,7 +26,7 @@ def sign_up_by_vk_id(request):
     response['PAYLOAD']['name'] = name
     response['PAYLOAD']['sure_name'] = sure_name
     response['PAYLOAD']['avatar'] = avatar
-    response['PAYLODA']['is_tutorial_done'] = field.is_tutorial_done
+    response['PAYLODA']['is_tutorial_done'] = False
 
     print('[sign_up_by_vk_id:RESPONSE]-->', response)
     return JsonResponse(response)
