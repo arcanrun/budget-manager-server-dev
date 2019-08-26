@@ -25,7 +25,7 @@ def log_in_by_vk_id(request):
             response['PAYLOAD']['name'] = name
             response['PAYLOAD']['sure_name'] = sure_name
             response['PAYLOAD']['avatar'] = avatar
-            response['PAYLODA']['is_tutorial_done'] = field.is_tutorial_done
+            response['PAYLOAD']['is_tutorial_done'] = field.is_tutorial_done
 
             print('[log_in_by_vk_id:RESPONSE]-->', response)
             return JsonResponse(response)
