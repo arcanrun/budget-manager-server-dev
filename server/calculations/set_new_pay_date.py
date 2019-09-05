@@ -10,32 +10,41 @@ import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
-from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day
+from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+
+from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
 
 def set_new_pay_date(request):
     req = json.loads(str(request.body, encoding='utf-8'))
     print('[set_new_pay_date:RECIVED]-->', req)
-    response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
+    response = {'RESPONSE': 'AUTH_ERROR', 'PAYLOAD': {}}
 
-    vk_id = str(req['vk_id'])
-    pay_day = str(req['payday'])
-    days_to_payday = int(req['days_to_payday'])
+    vk_id = get_id_from_vk_params(str(req['params']))
+    query_params = make_dict_from_query(str(req['params']))
+    client_secret = insert_client_sign()
+    if is_valid(query=query_params, secret=client_secret):
+        pay_day = str(req['payday'])
+        days_to_payday = int(req['days_to_payday'])
 
-    all_users = Vkuser.objects.all()
+        all_users = Vkuser.objects.all()
 
-    for field in all_users:
-        if (vk_id == field.id_vk):
+        for field in all_users:
+            if (vk_id == field.id_vk):
 
-            resArr = make_calculations_full(
-                field.common, field.fun, field.invest, days_to_payday,  field.budget)
+                resArr = make_calculations_full(
+                    field.common, field.fun, field.invest, days_to_payday,  field.budget)
 
-            Vkuser.objects.filter(id_vk=vk_id).update(
-                pay_day=pay_day, days_to_payday=days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2])
-            break
+                Vkuser.objects.filter(id_vk=vk_id).update(
+                    pay_day=pay_day, days_to_payday=days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2])
+                break
 
-    response = get_updated_data(vk_id)
-    response['TEST'] = resArr
-    print('[set_new_pay_date:RESPONSE]-->', response)
+        response = get_updated_data(vk_id)
+        response['TEST'] = resArr
+        print('[set_new_pay_date:RESPONSE]-->', response)
 
-    return JsonResponse(response)
+        return JsonResponse(response)
+    else:
+        print('[set_new_pay_date:RESPONSE]-->', response)
+
+        return JsonResponse(response)

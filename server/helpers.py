@@ -12,6 +12,22 @@ costsPattern = json.dumps({
 })
 
 
+def is_user_registered(user_id: str)->bool:
+    all_users = Vkuser.objects.all()
+    for field in all_users:
+        if (user_id == field.id_vk):
+            return True
+    return False
+
+
+def get_id_from_vk_params(params: str)->str:
+    pos_0 = params.find('vk_user_id=') + len('vk_user_id=')
+    cut_params = params[pos_0:]
+    pos_1 = cut_params.find('&')
+    vk_id = cut_params[:pos_1]
+    return vk_id
+
+
 def get_updated_data(vk_id):
     response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
     updated_all_users = Vkuser.objects.all()

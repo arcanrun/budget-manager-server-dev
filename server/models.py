@@ -16,6 +16,8 @@ class History(models.Model):
 class Vkuser(models.Model):
 
     id_vk = models.TextField(max_length=50)
+    name = models.TextField(max_length=100)
+    sure_name = models.TextField(max_length=100)
     budget = models.TextField(max_length=100, blank=True)
     pay_day = models.TextField(blank=True)
     common = models.TextField(max_length=1000)
@@ -26,4 +28,4 @@ class Vkuser(models.Model):
     is_tutorial_done = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'id_vk--->%s || budget--->%s' % (self.id_vk, self.budget)
+        return '%s | %s | %s | %s' % (self.id_vk, self.name, self.sure_name, self.budget)
