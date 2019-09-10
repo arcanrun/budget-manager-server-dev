@@ -7,7 +7,7 @@ import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
-from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
@@ -22,6 +22,9 @@ def first_add_or_change_budget(request):
     response = {'RESPONSE': 'AUTH_ERROR', 'PAYLOAD': {}}
 
     if is_valid(query=query_params, secret=client_secret):
+        if not is_valid_number(req['budget']):
+            response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
+            return JsonResponse(response)
         budget = round(float(req['budget']), 2)
         operation = str(req['operation'])
 

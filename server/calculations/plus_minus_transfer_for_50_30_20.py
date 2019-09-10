@@ -6,7 +6,7 @@ Transfer goes here too!
 import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
-from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
@@ -19,6 +19,9 @@ def plus_minus_transfer_for_50_30_20(request):
     query_params = make_dict_from_query(str(req['params']))
     client_secret = insert_client_sign()
     if is_valid(query=query_params, secret=client_secret):
+        if not is_valid_number(req['value']):
+            response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
+            return JsonResponse(response)
         typeCost = req['type']
         value = round(float(req['value']), 2)
         operation = req['operation']
