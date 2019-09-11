@@ -143,14 +143,14 @@ STATIC_URL = '/static/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ORIGIN_WHITELIST = "https://localhost:3000"
-CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io/budget-manager/"
+# CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io"
 # CORS_ORIGIN_WHITELIST = (
 #     "https://localhost:3000",
 # )
 # CORS_ORIGIN_WHITELIST = ["https://localhost:3000"]
 # CORS_ORIGIN_WHITELIST = "https://afternoon-cove-62572.herokuapp.com"
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = [
     'GET',
     'OPTIONS',
