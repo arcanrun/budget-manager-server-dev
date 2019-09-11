@@ -143,7 +143,8 @@ STATIC_URL = '/static/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+# CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io/budget-manager/"
 # CORS_ORIGIN_WHITELIST = (
 #     "https://localhost:3000",
 # )
