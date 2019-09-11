@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,9 +27,8 @@ SECRET_KEY = '!a8tv!myd6pg%=+7e3go1x7o7h&q5$oiyhrtpbv^3_48a$5h=j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com',
+                 'localhost', '127.0.0.1', 'https://localhost:3000/', 'http://127.0.0.1:8000/log-in']
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,18 +42,17 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+
 
 ]
 
@@ -143,3 +142,20 @@ STATIC_URL = '/static/'
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+# CORS_ORIGIN_WHITELIST = (
+#     "https://localhost:3000",
+# )
+# CORS_ORIGIN_WHITELIST = ["https://localhost:3000"]
+# CORS_ORIGIN_WHITELIST = "https://afternoon-cove-62572.herokuapp.com"
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    'GET',
+    'OPTIONS',
+    'POST',
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-Content-Type-Options',
+]

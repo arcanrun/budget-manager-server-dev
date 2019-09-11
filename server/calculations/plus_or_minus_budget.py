@@ -8,9 +8,14 @@ from ..models import Vkuser, History
 from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
+from ..auth.check_origin import is_allowed_origin
 
 
 def plus_or_minus_budget(request):
+    if not is_allowed_origin(request):
+        return JsonResponse({
+            'RESPONSE': 'BAD_REQUEST'
+        })
 
     response = {'RESPONSE': 'AUTH_ERROR', 'PAYLOAD': {}}
     req = json.loads(str(request.body, encoding='utf-8'))

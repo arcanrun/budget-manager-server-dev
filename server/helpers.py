@@ -168,6 +168,7 @@ def set_days_to_payday(vk_id, to_day):
                     else:
                         Vkuser.objects.filter(id_vk=vk_id).update(
                             days_to_payday=daysToPayday_check)
+                    break
 
     return {'days_to_payday': daysToPayday_check,
             'common': field.common, 'fun': field.fun, 'invest': field.invest, 'budget': field.budget}
