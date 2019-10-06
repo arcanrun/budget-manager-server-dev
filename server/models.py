@@ -16,8 +16,8 @@ class History(models.Model):
 class Vkuser(models.Model):
 
     id_vk = models.TextField(max_length=50)
-    name = models.TextField(max_length=100)
-    sure_name = models.TextField(max_length=100)
+    name = models.TextField(max_length=100, blank=True)
+    sure_name = models.TextField(max_length=100, blank=True)
     budget = models.TextField(max_length=100, blank=True)
     pay_day = models.TextField(blank=True)
     common = models.TextField(max_length=1000)

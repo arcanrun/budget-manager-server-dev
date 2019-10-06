@@ -1,4 +1,11 @@
 import json
+
+import datetime
+from django.utils import timezone
+
+
+import requests
+
 from urllib.parse import urlparse, parse_qsl, urlencode
 
 from django.http import JsonResponse
@@ -15,11 +22,16 @@ def log_in_by_vk_id(request):
         return JsonResponse({
             'RESPONSE': 'BAD_REQUEST'
         })
-
+    freegeoip_response = requests.get('http://freegeoip.net/json')
+    freegeoip_response_json = freegeoip_response.json()
+    # user_time_zone = freegeoip_response_json['time_zone']
+    print('*******************', datetime.datetime.now(), '***************')
+    print('*******************', timezone.now(), '***************')
+    print('*******************', freegeoip_response_json, '***************')
     req = json.loads(str(request.body, encoding='utf-8'))
 
-    # for k, v in request.META.items():
-    #     print(k, ':', v)
+    for k, v in request.META.items():
+        print(k, ':', v)
 
     # print('_______________>', request.META['HTTP_ORIGIN'])
     print('[log_in_by_vk_id:RECIVED]-->', req)

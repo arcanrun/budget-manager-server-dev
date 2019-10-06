@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
 from server import views
 
 
@@ -31,4 +32,5 @@ urlpatterns = [
     path('profile_page/', views.profile_page),  # done
     path('calc-budget/', views.calc_budget),  # done
     path('tutorial-state/', views.tutorial_state),  # done
+    path('/', include('rest_framework.urls'))
 ]

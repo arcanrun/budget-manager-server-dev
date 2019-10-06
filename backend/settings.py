@@ -40,10 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'server',
     'corsheaders',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'easy_timezones',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -51,10 +56,13 @@ MIDDLEWARE = [
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 
 ]
+MIDDLEWARE_CLASSES = (
+
+    'easy_timezones.middleware.EasyTimezoneMiddleware',
+)
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -143,8 +151,8 @@ STATIC_URL = '/static/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# CORS_ORIGIN_WHITELIST = "https://localhost:3000"
-CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io"
+CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+# CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io"
 # CORS_ORIGIN_WHITELIST = (
 #     "https://localhost:3000",
 # )
@@ -160,3 +168,8 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-Content-Type-Options',
 ]
+
+# some headers:
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
