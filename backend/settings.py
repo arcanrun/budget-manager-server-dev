@@ -40,9 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'server',
     'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'easy_timezones',
+
 ]
 
 MIDDLEWARE = [
@@ -59,10 +57,6 @@ MIDDLEWARE = [
 
 
 ]
-MIDDLEWARE_CLASSES = (
-
-    'easy_timezones.middleware.EasyTimezoneMiddleware',
-)
 
 ROOT_URLCONF = 'backend.urls'
 
