@@ -15,12 +15,8 @@ def sign_up_by_vk_id(request):
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
-    # name = str(req['name'])
-    # sure_name = str(req['sure_name'])
-    print('*******************', datetime.datetime.now(), '***************')
-    print('*******************', timezone.now(), '***************')
-    register_date = req['toDay']
-    register_date = req['toDay']
+
+    register_date = datetime.datetime.now()
     client_secret = insert_client_sign()
 
     print('[sign_up_by_vk_id:RECIVED]-->', req)

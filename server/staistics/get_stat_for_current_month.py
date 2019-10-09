@@ -1,4 +1,5 @@
 import json
+import datetime
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
@@ -17,7 +18,10 @@ def get_stat_for_current_month(request):
     client_secret = insert_client_sign()
 
     if is_valid(query=query_params, secret=client_secret):
-        toDayMonth = req['toDayFormated'][3:]
+
+        toDayMonth = datetime.datetime.now()
+        toDayMonth = toDayMonth.strftime('%d.%m.%Y')
+
         costs = {
             'total': 0,
             'common': 0,
@@ -33,7 +37,11 @@ def get_stat_for_current_month(request):
 
         history = History.objects.all()
         for field in history:
-            if (vk_id == field.id_vk and field.date[3:] == toDayMonth):
+            foramated_date = field.date[:field.date.find(' ')]
+            foramated_date = datetime.datetime.strptime(
+                foramated_date, '%Y-%m-%d')
+            foramated_date = foramated_date.strftime('%d.%m.%Y')
+            if (vk_id == field.id_vk and foramated_date == toDayMonth):
                 if field.operation == 'minus':
                     costs['total'] += float(field.value)
                     if field.type_costs == 'common':

@@ -22,25 +22,28 @@ def get_history(request):
     if is_valid(query=query_params, secret=client_secret):
         history = History.objects.all()
         history_object = {}
-        tempArr = []
         cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
 
         for field in history:
             if (vk_id == field.id_vk):
-                if field.date in history_object:
+                foramated_date = field.date[:field.date.find(' ')]
+                foramated_date = datetime.datetime.strptime(
+                    foramated_date, '%Y-%m-%d')
+                foramated_date = foramated_date.strftime('%d.%m.%Y')
+                if foramated_date in history_object:
                     cost_object['type_cost'] = field.type_costs
                     cost_object['value'] = field.value
                     cost_object['operation'] = field.operation
                     cost_object['id'] = field.id
                 else:
-                    history_object[field.date] = []
+                    history_object[foramated_date] = []
 
                     cost_object['type_cost'] = field.type_costs
                     cost_object['value'] = field.value
                     cost_object['operation'] = field.operation
                     cost_object['id'] = field.id
 
-                history_object[field.date].append(cost_object)
+                history_object[foramated_date].append(cost_object)
 
                 cost_object = {'type_cost': '',
                                'operation': '', 'value': '', 'id': ''}

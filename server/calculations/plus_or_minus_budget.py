@@ -4,6 +4,8 @@ Plus and Minus buttons for budget card
 import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
+import datetime
+
 
 from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
@@ -37,7 +39,7 @@ def plus_or_minus_budget(request):
             return JsonResponse(response)
 
         value = round(float(req['value']), 2)
-        date_now = req['date_now']
+        date_now = datetime.datetime.now()
 
         all_users = Vkuser.objects.all()
         for field in all_users:

@@ -7,6 +7,7 @@ import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
 from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+import datetime
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
@@ -25,7 +26,8 @@ def plus_minus_transfer_for_50_30_20(request):
         typeCost = req['type']
         value = round(float(req['value']), 2)
         operation = req['operation']
-        date_now = req['date_now']
+        # date_now = req['date_now']
+        date_now = datetime.datetime.now()
         newBudget = ''
         costsObject = {}
         all_users = Vkuser.objects.all()
