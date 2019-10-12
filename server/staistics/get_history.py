@@ -26,10 +26,11 @@ def get_history(request):
 
         for field in history:
             if (vk_id == field.id_vk):
-                foramated_date = field.date[:field.date.find(' ')]
-                foramated_date = datetime.datetime.strptime(
-                    foramated_date, '%Y-%m-%d')
-                foramated_date = foramated_date.strftime('%d.%m.%Y')
+                foramated_date = field.date[:field.date.find(':')]
+                print('---->', foramated_date+':00:00.000000')
+                # foramated_date = datetime.datetime.strptime(
+                #     foramated_date, '%Y-%m-%d')
+                # foramated_date = foramated_date.strftime('%d.%m.%Y')
                 if foramated_date in history_object:
                     cost_object['type_cost'] = field.type_costs
                     cost_object['value'] = field.value
