@@ -26,6 +26,7 @@ class Vkuser(models.Model):
     days_to_payday = models.TextField(max_length=100, blank=True)
     register_date = models.TextField(max_length=100,  blank=True)
     is_tutorial_done = models.BooleanField(default=False)
+    timezone = models.IntegerField(default=0)
 
     def __str__(self):
         return '%s | %s | %s | %s' % (self.id_vk, self.name, self.sure_name, self.budget)

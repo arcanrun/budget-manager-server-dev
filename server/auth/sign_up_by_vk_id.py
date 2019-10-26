@@ -1,5 +1,6 @@
 import json
 import datetime
+from datetime import timedelta
 from django.utils import timezone
 
 from django.http import JsonResponse
@@ -15,15 +16,15 @@ def sign_up_by_vk_id(request):
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
-
+    timezone = int(req['timezone'])
     register_date = datetime.datetime.now()
     client_secret = insert_client_sign()
 
     print('[sign_up_by_vk_id:RECIVED]-->', req)
 
-    if is_valid(query=query_params, secret=client_secret) and not is_user_registered(vk_id):
+    if is_valid(query=query_params, secret=client_secret) and not is_user_registered(vk_id) and timezone <= 14 and timezone >= -12:
         user = Vkuser(id_vk=vk_id, common=costsPattern,
-                      fun=costsPattern, invest=costsPattern, register_date=register_date)
+                      fun=costsPattern, invest=costsPattern, register_date=register_date, timezone=timezone)
         user.save()
 
         response['RESPONSE'] = 'SIGN_UP_SUCCESS'
@@ -32,6 +33,9 @@ def sign_up_by_vk_id(request):
         # response['PAYLOAD']['name'] = name
         # response['PAYLOAD']['sure_name'] = sure_name
         response['PAYLOAD']['is_tutorial_done'] = False
+        with_time_zone = register_date + timedelta(hours=timezone)
+
+        response['PAYLOAD']['register_date'] = with_time_zone
 
         print('[sign_up_by_vk_id:RESPONSE]-->', response)
         return JsonResponse(response)

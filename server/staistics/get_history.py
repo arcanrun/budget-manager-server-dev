@@ -4,6 +4,7 @@ Used for history page
 import json
 from django.http import JsonResponse
 import datetime
+from datetime import timedelta
 from ..models import Vkuser, History
 
 from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
@@ -21,13 +22,22 @@ def get_history(request):
 
     if is_valid(query=query_params, secret=client_secret):
         history = History.objects.all()
+        user = Vkuser.objects.all()
         history_object = {}
         cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
+        timezone = ''
 
+        for user_field in user:
+            if (vk_id == user_field.id_vk):
+                timezone = user_field.timezone
+                break
         for field in history:
             if (vk_id == field.id_vk):
-                foramated_date = field.date[:field.date.find(':')]
-                print('---->', foramated_date+':00:00.000000')
+                with_time_zone = datetime.datetime.strptime(
+                    field.date, '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=timezone)
+                # print('::::::::', with_time_zone)
+                foramated_date = field.date[:field.date.find(' ')]
+                print('---->', foramated_date)
                 # foramated_date = datetime.datetime.strptime(
                 #     foramated_date, '%Y-%m-%d')
                 # foramated_date = foramated_date.strftime('%d.%m.%Y')

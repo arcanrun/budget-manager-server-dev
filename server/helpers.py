@@ -39,7 +39,7 @@ def get_updated_data(vk_id):
             response['PAYLOAD']['budget'] = field.budget
             response['PAYLOAD']['pay_day'] = field.pay_day
             response['PAYLOAD']['days_to_payday'] = field.days_to_payday
-            response['PAYLOAD']['register_date'] = field.register_date
+            # response['PAYLOAD']['register_date'] = field.register_date
             response['PAYLOAD']['is_tutorial_done'] = field.is_tutorial_done
             response['RESPONSE'] = 'SUCCES_FETCHED'
 

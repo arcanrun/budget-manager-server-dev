@@ -1,6 +1,7 @@
 import json
 
 import datetime
+from datetime import timedelta
 from django.utils import timezone
 
 
@@ -21,24 +22,17 @@ def log_in_by_vk_id(request):
             'RESPONSE': 'BAD_REQUEST'
         })
 
-    # user_time_zone = freegeoip_response_json['time_zone']
-    print('*******************', datetime.datetime.now(), '***************')
-    print('*******************', timezone.now(), '***************')
     req = json.loads(str(request.body, encoding='utf-8'))
-
-    for k, v in request.META.items():
-        print(k, ':', v)
-
-    # print('_______________>', request.META['HTTP_ORIGIN'])
     print('[log_in_by_vk_id:RECIVED]-->', req)
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
+    timezone = int(req['timezone'])
     client_secret = insert_client_sign()
 
     response = {'RESPONSE': 'LOGIN_ERROR', 'PAYLOAD': {}}
 
-    if is_valid(query=query_params, secret=client_secret):
+    if is_valid(query=query_params, secret=client_secret) and timezone <= 14 and timezone >= -12:
         all_users = Vkuser.objects.all()
         for field in all_users:
             if (vk_id == field.id_vk):
@@ -48,8 +42,16 @@ def log_in_by_vk_id(request):
                 response['PAYLOAD']['sure_name'] = field.sure_name
                 response['PAYLOAD']['is_tutorial_done'] = field.is_tutorial_done
 
-                print('[log_in_by_vk_id:RESPONSE]-->', response)
-                return JsonResponse(response)
+                with_time_zone = datetime.datetime.strptime(
+                    field.register_date, '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=field.timezone)
+
+                response['PAYLOAD']['register_date'] = with_time_zone
+                if field.timezone != timezone:
+                    print(type(field.timezone), type(timezone))
+                    Vkuser.objects.filter(id_vk=vk_id).update(
+                        timezone=timezone)
+        print('[log_in_by_vk_id:RESPONSE]-->', response)
+        return JsonResponse(response)
 
     print('[log_in_by_vk_id:RESPONSE]-->', response)
     return JsonResponse(response)
