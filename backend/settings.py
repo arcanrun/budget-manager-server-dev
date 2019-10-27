@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!a8tv!myd6pg%=+7e3go1x7o7h&q5$oiyhrtpbv^3_48a$5h=j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com',
                  'localhost', '127.0.0.1', 'https://localhost:3000/', 'http://127.0.0.1:8000/log-in']
@@ -144,8 +144,8 @@ STATIC_URL = '/static/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# CORS_ORIGIN_WHITELIST = "https://localhost:3000"
-CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io"
+CORS_ORIGIN_WHITELIST = "https://localhost:3000"
+# CORS_ORIGIN_WHITELIST = "https://arcanrun.github.io"
 
 # CORS_ORIGIN_WHITELIST = (
 #     "https://localhost:3000",

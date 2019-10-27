@@ -35,8 +35,7 @@ def get_history(request):
             if (vk_id == field.id_vk):
                 with_time_zone = datetime.datetime.strptime(
                     field.date, '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=timezone)
-                # print('::::::::', with_time_zone)
-                foramated_date = field.date[:field.date.find(' ')]
+                foramated_date = with_time_zone.strftime('%Y-%m-%d')
                 print('---->', foramated_date)
                 # foramated_date = datetime.datetime.strptime(
                 #     foramated_date, '%Y-%m-%d')
