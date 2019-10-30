@@ -74,6 +74,7 @@ def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budge
     IS that make_calculations is for temp costs only and FULL is for relodaing all"""
     daysToPayday = int(daysToPayday)
 
+    # from json to dict
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(filed_invest)
@@ -98,6 +99,7 @@ def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budge
     funObject["temp"] = funObject["maxToday"]
     investObject["temp"] = investObject["maxToday"]
 
+    # from dict to json
     commonObjectJSON = json.dumps(commonObject)
     funObjectJSON = json.dumps(funObject)
     investObjectJSON = json.dumps(investObject)
@@ -108,6 +110,7 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
 
     daysToPayday = int(daysToPayday)
 
+    # from json to dict
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
@@ -131,6 +134,7 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     funObject["temp"] = funObject["maxToday"]
     investObject["temp"] = investObject["maxToday"]
 
+    # from dict to json
     commonObjectJSON = json.dumps(commonObject)
     funObjectJSON = json.dumps(funObject)
     investObjectJSON = json.dumps(investObject)

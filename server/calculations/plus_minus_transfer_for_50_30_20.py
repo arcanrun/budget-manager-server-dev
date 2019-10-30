@@ -49,6 +49,7 @@ def plus_minus_transfer_for_50_30_20(request):
 
                     if (costsObject[typeCost]['temp'] > costsObject[typeCost]['maxToday']):
                         costsObject[typeCost]['maxToday'] = costsObject[typeCost]['temp']
+
                     # from dict to json
                     costsObject['common'] = json.dumps(costsObject['common'])
                     costsObject['fun'] = json.dumps(costsObject['fun'])
@@ -58,34 +59,46 @@ def plus_minus_transfer_for_50_30_20(request):
                     res = costsObject[typeCost]['value'] = round(
                         costsObject[typeCost]['value'] - value, 2)
 
-                    if res < 0:
-                        if typeCost == 'common' and (costsObject['fun']['value'] - value) > 0 or typeCost == 'invest' and (costsObject['fun']['value'] - value) > 0:
-                            costsObject['fun']['value'] = round(
-                                costsObject['fun']['value'] - value, 2)
-                        elif typeCost == 'common' and (costsObject['fun']['value'] - value) < 0:
-                            costsObject['invest']['value'] = round(
-                                costsObject['invest']['value'] - value, 2)
-                        elif typeCost == 'fun' and (costsObject['common']['value'] - value) > 0:
-                            costsObject['common']['value'] = round(
-                                costsObject['common']['value'] - value, 2)
-                        elif typeCost == 'fun' and (costsObject['common']['value'] - value) < 0:
-                            costsObject['invest']['value'] = round(
-                                costsObject['invest']['value'] - value, 2)
-                        elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
-                            costsObject['common']['value'] = round(
-                                costsObject['common']['value'] - value, 2)
-                        elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0 and (costsObject['common']['value'] - value) < 0:
-                            costsObject['fun']['value'] = round(
-                                costsObject['fun']['value'] - value, 2)
+                    # if res < 0:
+                    #     if typeCost == 'common' and (costsObject['fun']['value'] - value) > 0 or typeCost == 'invest' and (costsObject['fun']['value'] - value) > 0:
+                    #         costsObject['fun']['value'] = round(
+                    #             costsObject['fun']['value'] - value, 2)
+                    #     elif typeCost == 'common' and (costsObject['fun']['value'] - value) < 0:
+                    #         costsObject['invest']['value'] = round(
+                    #             costsObject['invest']['value'] - value, 2)
+                    #     elif typeCost == 'fun' and (costsObject['common']['value'] - value) > 0:
+                    #         costsObject['common']['value'] = round(
+                    #             costsObject['common']['value'] - value, 2)
+                    #     elif typeCost == 'fun' and (costsObject['common']['value'] - value) < 0:
+                    #         costsObject['invest']['value'] = round(
+                    #             costsObject['invest']['value'] - value, 2)
+                    #     elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
+                    #         costsObject['common']['value'] = round(
+                    #             costsObject['common']['value'] - value, 2)
+                    #     elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0 and (costsObject['common']['value'] - value) < 0:
+                    #         costsObject['fun']['value'] = round(
+                    #             costsObject['fun']['value'] - value, 2)
 
                     newBudget = float(field.budget) - value
-                    costsObject[typeCost]['value'] = res
-                    costsObject[typeCost]['temp'] = round(
-                        costsObject[typeCost]['temp'] - value, 2)
 
-                    costsObject['common'] = json.dumps(costsObject['common'])
-                    costsObject['fun'] = json.dumps(costsObject['fun'])
-                    costsObject['invest'] = json.dumps(costsObject['invest'])
+                    if newBudget <= 0:
+                        resArr = make_calculations_full(
+                            field.common, field.fun, field.invest, field.days_to_payday, newBudget)
+
+                        costsObject['common'] = resArr[0]
+                        costsObject['fun'] = resArr[1]
+                        costsObject['invest'] = resArr[2]
+                    else:
+                        costsObject[typeCost]['value'] = res
+                        costsObject[typeCost]['temp'] = round(
+                            costsObject[typeCost]['temp'] - value, 2)
+
+                        # from dict to json
+                        costsObject['common'] = json.dumps(
+                            costsObject['common'])
+                        costsObject['fun'] = json.dumps(costsObject['fun'])
+                        costsObject['invest'] = json.dumps(
+                            costsObject['invest'])
 
                 if operation == 'transfer':
                     transfer_to = str(req['transfer_to'])

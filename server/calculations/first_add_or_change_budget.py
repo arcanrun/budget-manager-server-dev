@@ -7,14 +7,14 @@ import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
-from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import logger, is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
 
 def first_add_or_change_budget(request):
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[first_add_or_change_budget:RECIVED]-->', req)
+    logger('first_add_or_change_budget:RECIVED', req)
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
     client_secret = insert_client_sign()
@@ -38,7 +38,7 @@ def first_add_or_change_budget(request):
                         budget=budget)
                     break
             response = get_updated_data(vk_id)
-            print('[ADD__first_add_or_change_budget:RESPONSE]-->', response)
+            logger('ADD__first_add_or_change_budget:RESPONSE', response)
             return JsonResponse(response)
 
         if operation == 'change':
@@ -52,10 +52,10 @@ def first_add_or_change_budget(request):
                     break
             response = get_updated_data(vk_id)
             response['TEST'] = resArr
-            print('[CHANGE__first_add_or_change_budget:RESPONSE]-->', response)
+            logger('CHANGE__first_add_or_change_budget:RESPONSE', response)
 
             return JsonResponse(response)
     else:
-        print('[first_add_or_change_budget:RESPONSE]-->', response)
+        logger('first_add_or_change_budget:RESPONSE', response)
 
         return JsonResponse(response)
