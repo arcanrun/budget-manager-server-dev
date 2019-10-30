@@ -6,7 +6,7 @@ Transfer goes here too!
 import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
-from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import logger, is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 import datetime
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
@@ -14,7 +14,8 @@ from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
 def plus_minus_transfer_for_50_30_20(request):
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[plus_minus_transfer_for_50_30_20:RECIVED]-->', req)
+
+    logger('plus_minus_transfer_for_50_30_20:RECIVED', req)
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
@@ -33,18 +34,22 @@ def plus_minus_transfer_for_50_30_20(request):
         all_users = Vkuser.objects.all()
         for field in all_users:
             if (vk_id == field.id_vk):
-
+                # from json to dict
                 costsObject["common"] = json.loads(field.common)
                 costsObject["fun"] = json.loads(field.fun)
                 costsObject["invest"] = json.loads(field.invest)
 
                 if operation == 'plus':
+
                     newBudget = float(field.budget) + value
                     costsObject[typeCost]['value'] = round(
                         costsObject[typeCost]['value'] + value, 2)
                     costsObject[typeCost]['temp'] = round(
                         costsObject[typeCost]['temp'] + value, 2)
 
+                    if (costsObject[typeCost]['temp'] > costsObject[typeCost]['maxToday']):
+                        costsObject[typeCost]['maxToday'] = costsObject[typeCost]['temp']
+                    # from dict to json
                     costsObject['common'] = json.dumps(costsObject['common'])
                     costsObject['fun'] = json.dumps(costsObject['fun'])
                     costsObject['invest'] = json.dumps(costsObject['invest'])
@@ -98,7 +103,7 @@ def plus_minus_transfer_for_50_30_20(request):
                     costsObject['fun'] = calc[1]
                     costsObject['invest'] = calc[2]
                     newBudget = float(field.budget)
-                    print('===============+>', costsObject)
+                    print('===============>', costsObject)
 
                 history_saver(field.id_vk, date_now,
                               operation, value, typeCost)
@@ -107,11 +112,11 @@ def plus_minus_transfer_for_50_30_20(request):
                 break
 
         response = get_updated_data(vk_id)
-        print('[plus_minus_transfer_for_50_30_20:RESPONSE]-->', response)
+        logger('plus_minus_transfer_for_50_30_20:RESPONSE', response)
 
         return JsonResponse(response)
     else:
         response = {'RESPONSE': 'AUTH_ERROR', 'PAYLOAD': {}}
-        print('[plus_minus_transfer_for_50_30_20:RESPONSE]-->', response)
+        logger('plus_minus_transfer_for_50_30_20:RESPONSE', response)
 
         return JsonResponse(response)

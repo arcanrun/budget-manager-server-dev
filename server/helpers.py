@@ -12,6 +12,17 @@ costsPattern = json.dumps({
 })
 
 
+def logger(title: str, query: dict):
+    iterator = 1
+    print('')
+    print('======', title, '==========================================================')
+    for k, v in query.items():
+        print(iterator, ')', k, ':', v)
+        iterator += 1
+    print('============================================================================')
+    print('')
+
+
 def is_user_registered(user_id: str)->bool:
     all_users = Vkuser.objects.all()
     for field in all_users:
