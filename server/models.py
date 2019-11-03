@@ -8,6 +8,7 @@ class History(models.Model):
     operation = models.TextField(max_length=50)
     value = models.TextField(max_length=100)
     type_costs = models.TextField(max_length=100)
+    comment = models.TextField(max_length=250, blank=True)
 
     def __str__(self):
         return '%s - %s -  %s - %s - %s' % (self.id_vk, self.date, self.operation, self.value, self.type_costs)

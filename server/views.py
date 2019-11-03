@@ -17,6 +17,7 @@ from .auth.sign_up_by_vk_id import sign_up_by_vk_id
 
 from .staistics.get_costs_all import get_costs_all
 from .staistics.get_history import get_history
+from .staistics.get_short_history import get_short_history
 from .staistics.get_stat_for_current_month import get_stat_for_current_month
 
 from .profile.profile_settings import profile_settings
@@ -54,6 +55,10 @@ def temp_today_cost(request):
 
 def history_page(request):
     return get_history(request)
+
+
+def history_short_info(request):
+    return get_short_history(request)
 
 
 def profile_manage(request):

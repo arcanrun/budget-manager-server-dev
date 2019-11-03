@@ -28,6 +28,7 @@ urlpatterns = [
     path('log-in/', views.log_in),  # done
     path('sign-up/', views.sign_up),  # done
     path('history-page/', views.history_page),  # done
+    path('history-short/', views.history_short_info),
     path('profile-manage/', views.profile_manage),  # done
     path('profile_page/', views.profile_page),  # done
     path('calc-budget/', views.calc_budget),  # done

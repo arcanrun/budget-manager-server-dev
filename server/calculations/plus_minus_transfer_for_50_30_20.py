@@ -6,7 +6,7 @@ Transfer goes here too!
 import json
 from django.http import JsonResponse
 from ..models import Vkuser, History
-from ..helpers import logger, is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import is_comment_valid, clear_string, logger, is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 import datetime
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
@@ -17,9 +17,19 @@ def plus_minus_transfer_for_50_30_20(request):
 
     logger('plus_minus_transfer_for_50_30_20:RECIVED', req)
 
+    try:
+        comment = clear_string(req['comment'])
+        if not is_comment_valid(comment):
+            return JsonResponse({
+                'RESPONSE': 'BAD_REQUEST'
+            })
+    except:
+        comment = False
+
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
     client_secret = insert_client_sign()
+
     if is_valid(query=query_params, secret=client_secret):
         if not is_valid_number(req['value']):
             response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
@@ -119,7 +129,7 @@ def plus_minus_transfer_for_50_30_20(request):
                     print('===============>', costsObject)
 
                 history_saver(field.id_vk, date_now,
-                              operation, value, typeCost)
+                              operation, value, typeCost, comment)
                 Vkuser.objects.filter(id_vk=vk_id).update(
                     budget=round(newBudget, 2), common=costsObject["common"], fun=costsObject["fun"], invest=costsObject["invest"])
                 break

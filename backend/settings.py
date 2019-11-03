@@ -26,7 +26,6 @@ SECRET_KEY = '!a8tv!myd6pg%=+7e3go1x7o7h&q5$oiyhrtpbv^3_48a$5h=j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
 ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com',
                  'localhost', '127.0.0.1', 'https://localhost:3000/', 'http://127.0.0.1:8000/log-in']
 # Application definition

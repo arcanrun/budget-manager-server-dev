@@ -7,26 +7,36 @@ from ..models import Vkuser, History
 import datetime
 
 
-from ..helpers import is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import is_comment_valid, clear_string, logger, is_valid_number, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 from ..auth.check_origin import is_allowed_origin
 
 
 def plus_or_minus_budget(request):
-    if not is_allowed_origin(request):
-        return JsonResponse({
-            'RESPONSE': 'BAD_REQUEST'
-        })
+    # if not is_allowed_origin(request):
+    #     return JsonResponse({
+    #         'RESPONSE': 'BAD_REQUEST'
+    #     })
 
     response = {'RESPONSE': 'AUTH_ERROR', 'PAYLOAD': {}}
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[calc_budget:RECIVED]-->', req)
+    logger('calc_budget:RECIVED', req)
 
     valid_opertaion_type = ['minus', 'plus']
     valid_type = ['budget']
+
     operation = req['operation']
     type = req['type']
+
+    try:
+        comment = clear_string(req['comment'])
+        if not is_comment_valid(comment):
+            return JsonResponse({
+                'RESPONSE': 'BAD_REQUEST'
+            })
+    except:
+        comment = False
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
@@ -56,14 +66,15 @@ def plus_or_minus_budget(request):
                 Vkuser.objects.filter(id_vk=vk_id).update(
                     budget=budget, common=resArr[0], fun=resArr[1], invest=resArr[2])
 
-                history_saver(field.id_vk, date_now, operation, value, type)
+                history_saver(field.id_vk, date_now,
+                              operation, value, type, comment)
                 break
 
         response = get_updated_data(vk_id)
-        print('[calc_budget:RESPONSE]-->', response)
+        logger('calc_budget:RESPONSE', response)
 
         return JsonResponse(response)
     else:
-        print('[calc_budget:RESPONSE]-->', response)
+        logger('calc_budget:RESPONSE', response)
 
         return JsonResponse(response)

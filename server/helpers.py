@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from .models import Vkuser, History
 import datetime
 import calendar
+import re
 
 import json
 
@@ -141,9 +142,13 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     return [commonObjectJSON, funObjectJSON, investObjectJSON]
 
 
-def history_saver(id_vk, date, operation, value, type_costs):
-    history = History(id_vk=id_vk, date=date,
-                      operation=operation, value=value, type_costs=type_costs)
+def history_saver(id_vk, date, operation, value, type_costs, comment):
+    if comment:
+        history = History(id_vk=id_vk, date=date,
+                          operation=operation, value=value, type_costs=type_costs, comment=comment)
+    else:
+        history = History(id_vk=id_vk, date=date,
+                          operation=operation, value=value, type_costs=type_costs)
     history.save()
     print('[history]:SUCCESS')
 
@@ -187,3 +192,23 @@ def set_days_to_payday(vk_id, to_day):
 
     return {'days_to_payday': daysToPayday_check,
             'common': field.common, 'fun': field.fun, 'invest': field.invest, 'budget': field.budget}
+
+
+def is_comment_valid(string: str):
+
+    if string.isspace():
+        return False
+
+    if len(string) > 126 or len(string) == 0:
+        return False
+
+    if re.search("[<>/:=\{\};$%^&#\|*@'\"]", string) != None:
+        return False
+
+    return True
+
+
+def clear_string(string: str):
+    res = str(string)
+    res = res.strip()
+    return res

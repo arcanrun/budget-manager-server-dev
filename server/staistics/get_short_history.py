@@ -12,7 +12,7 @@ from ..helpers import logger, get_updated_data, make_calculations, make_calculat
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
 
-def get_history(request):
+def get_short_history(request):
     response = {'RESPONSE': 'ERROR_AUTH', 'PAYLOAD': []}
     req = json.loads(str(request.body, encoding='utf-8'))
     logger('get_history:RECIVED', req)
@@ -25,7 +25,7 @@ def get_history(request):
         history = History.objects.all()
         user = Vkuser.objects.all()
         history_object = {}
-        cost_object = {'type_cost': '', 'operation': '', 'value': '', 'id': ''}
+        cost_object = {'operation': '', 'value': ''}
         timezone = ''
 
         for user_field in user:
@@ -41,24 +41,18 @@ def get_history(request):
                 #     foramated_date, '%Y-%m-%d')
                 # foramated_date = foramated_date.strftime('%d.%m.%Y')
                 if foramated_date in history_object:
-                    cost_object['type_cost'] = field.type_costs
                     cost_object['value'] = field.value
                     cost_object['operation'] = field.operation
-                    cost_object['id'] = field.id
-                    cost_object['comment'] = field.comment
                 else:
                     history_object[foramated_date] = []
 
-                    cost_object['type_cost'] = field.type_costs
                     cost_object['value'] = field.value
                     cost_object['operation'] = field.operation
-                    cost_object['id'] = field.id
-                    cost_object['comment'] = field.comment
 
                 history_object[foramated_date].append(cost_object)
 
-                cost_object = {'type_cost': '',
-                               'operation': '', 'value': '', 'id': ''}
+                cost_object = {
+                    'operation': '', 'value': ''}
 
         for k, v in history_object.items():
             v.reverse()
