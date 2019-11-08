@@ -15,7 +15,7 @@ from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 def get_short_history(request):
     response = {'RESPONSE': 'ERROR_AUTH', 'PAYLOAD': []}
     req = json.loads(str(request.body, encoding='utf-8'))
-    logger('get_history:RECIVED', req)
+    logger('get_history_short:RECIVED', req)
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
@@ -60,7 +60,7 @@ def get_short_history(request):
         response['PAYLOAD'].reverse()
         response['RESPONSE'] = 'SUCCESS'
 
-        logger('get_history:RESPONSE', response)
+        logger('get_history_short:RESPONSE', response)
 
         return JsonResponse(response)
 

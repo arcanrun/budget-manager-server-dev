@@ -3,7 +3,7 @@ import datetime
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
-from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import logger, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 
@@ -11,7 +11,7 @@ from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 def get_stat_for_current_month(request):
     response = {'RESPONSE': 'ERROR', 'PAYLOAD': {}}
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[get_stat_for_current_month:RECIVED]-->', req)
+    logger('get_stat_for_current_month:RECIVED-->', req)
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
@@ -20,7 +20,7 @@ def get_stat_for_current_month(request):
     if is_valid(query=query_params, secret=client_secret):
 
         toDayMonth = datetime.datetime.now()
-        toDayMonth = toDayMonth.strftime('%d.%m.%Y')
+        toDayMonth = toDayMonth.strftime('%m')
 
         costs = {
             'total': 0,
@@ -37,11 +37,14 @@ def get_stat_for_current_month(request):
 
         history = History.objects.all()
         for field in history:
+
             foramated_date = field.date[:field.date.find(' ')]
             foramated_date = datetime.datetime.strptime(
                 foramated_date, '%Y-%m-%d')
-            foramated_date = foramated_date.strftime('%d.%m.%Y')
+            foramated_date = foramated_date.strftime('%m')
+
             if (vk_id == field.id_vk and foramated_date == toDayMonth):
+                print('Here')
                 if field.operation == 'minus':
                     costs['total'] += float(field.value)
                     if field.type_costs == 'common':
@@ -62,8 +65,8 @@ def get_stat_for_current_month(request):
         response['PAYLOAD']['costs'] = costs
         response['PAYLOAD']['income'] = income
 
-        print('[get_stat_for_current_month:RESPONSE]-->', response)
+        logger('get_stat_for_current_month:RESPONSE-->', response)
         return JsonResponse(response)
     else:
-        print('[get_stat_for_current_month:RESPONSE]-->', response)
+        logger('get_stat_for_current_month:RESPONSE-->', response)
         return JsonResponse(response)
