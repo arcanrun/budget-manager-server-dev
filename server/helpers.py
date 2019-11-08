@@ -3,6 +3,7 @@ from .models import Vkuser, History
 import datetime
 import calendar
 import re
+from datetime import timedelta
 
 import json
 
