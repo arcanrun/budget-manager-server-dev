@@ -17,8 +17,8 @@ def is_valid(*, query: dict, secret: str) -> bool:
 
 
 def insert_client_sign():
-    client_secret = "wCZ3dG4BUICAlS5DjEQr"
-    # client_secret = "rLQ3DMjH6sbxr4ktFz2j"
+    # client_secret = "wCZ3dG4BUICAlS5DjEQr"
+    client_secret = "rLQ3DMjH6sbxr4ktFz2j"
     return client_secret
 
 
