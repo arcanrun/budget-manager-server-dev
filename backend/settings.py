@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['afternoon-cove-62572.herokuapp.com', 'budget-manger-dev.heroku
                  'localhost', '127.0.0.1', 'https://localhost:3000/', 'http://127.0.0.1:8000/log-in']
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
