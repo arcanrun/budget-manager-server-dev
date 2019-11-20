@@ -41,6 +41,8 @@ def log_in_by_vk_id(request):
                 response['PAYLOAD']['name'] = field.name
                 response['PAYLOAD']['sure_name'] = field.sure_name
                 response['PAYLOAD']['is_tutorial_done'] = field.is_tutorial_done
+                response['PAYLOAD']['is_vk_theme'] = field.is_vk_theme
+                response['PAYLOAD']['is_costom_dark_theme'] = field.is_costom_dark_theme
 
                 with_time_zone = datetime.datetime.strptime(
                     field.register_date, '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=field.timezone)

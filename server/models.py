@@ -28,6 +28,8 @@ class Vkuser(models.Model):
     register_date = models.TextField(max_length=100,  blank=True)
     is_tutorial_done = models.BooleanField(default=False)
     timezone = models.IntegerField(default=0)
+    is_vk_theme = models.BooleanField(default=True)
+    is_costom_dark_theme = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s | %s | %s | %s' % (self.id_vk, self.name, self.sure_name, self.budget)
