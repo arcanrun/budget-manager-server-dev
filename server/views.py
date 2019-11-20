@@ -23,6 +23,8 @@ from .staistics.get_stat_for_current_month import get_stat_for_current_month
 from .profile.profile_settings import profile_settings
 
 from .profile.change_tutorial_state import change_tutorial_state
+from .profile.toggle_vk_theme_client import toggle_vk_theme_client
+from .profile.toggle_dark_theme import toggle_dark_theme
 
 
 def log_in(request):
@@ -71,3 +73,11 @@ def profile_page(request):
 
 def tutorial_state(request):
     return change_tutorial_state(request)
+
+
+def toggle_vk_theme(request):
+    return toggle_vk_theme_client(request)
+
+
+def toggle_custom_dark_theme(request):
+    return toggle_dark_theme(request)

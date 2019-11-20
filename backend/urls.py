@@ -33,5 +33,8 @@ urlpatterns = [
     path('profile_page/', views.profile_page),  # done
     path('calc-budget/', views.calc_budget),  # done
     path('tutorial-state/', views.tutorial_state),  # done
+    path('vk_client_theme/', views.toggle_vk_theme),  # done
+    path('custom_dark_theme/', views.toggle_custom_dark_theme),  # done
     path('/', include('rest_framework.urls'))
+
 ]
