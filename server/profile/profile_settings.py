@@ -32,6 +32,23 @@ def profile_settings(request):
             response = {'RESPONSE': 'DELETE_USER_SUCCESS',
                         'PAYLOAD': vk_id}
         logger('profile_manage:RESPONSE-->', response)
+
+        if operation == 'history_delete_all':
+            for field in history:
+                if (vk_id == field.id_vk):
+                    History.objects.filter(id_vk=vk_id).delete()
+            response = {'RESPONSE': 'HISTORY_DELETE_ALL',
+                        'PAYLOAD': vk_id}
+        logger('profile_manage:RESPONSE-->', response)
+
+        # if operation == 'history_delete_exact_month':
+        #     for field in history:
+        #         if (vk_id == field.id_vk and month == ???):
+        #             History.objects.filter(id_vk=vk_id).delete()
+        #     response = {'RESPONSE': 'HISTORY_DELETE_ALL',
+        #                 'PAYLOAD': vk_id}
+        # logger('profile_manage:RESPONSE-->', response)
+
         return JsonResponse(response)
     else:
         logger('profile_manage:RESPONSE-->', response)
