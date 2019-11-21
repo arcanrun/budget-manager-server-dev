@@ -30,6 +30,7 @@ class Vkuser(models.Model):
     timezone = models.IntegerField(default=0)
     is_vk_theme = models.BooleanField(default=True)
     is_costom_dark_theme = models.BooleanField(default=False)
+    is_full_history = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s | %s | %s | %s' % (self.id_vk, self.name, self.sure_name, self.budget)

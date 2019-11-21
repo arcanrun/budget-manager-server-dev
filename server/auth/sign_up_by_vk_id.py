@@ -38,6 +38,7 @@ def sign_up_by_vk_id(request):
         response['PAYLOAD']['register_date'] = with_time_zone
         response['PAYLOAD']['is_vk_theme'] = True
         response['PAYLOAD']['is_costom_dark_theme'] = False
+        response['PAYLOAD']['is_full_history'] = True
 
         print('[sign_up_by_vk_id:RESPONSE]-->', response)
         return JsonResponse(response)

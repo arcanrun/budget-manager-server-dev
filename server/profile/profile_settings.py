@@ -41,6 +41,15 @@ def profile_settings(request):
                         'PAYLOAD': vk_id}
         logger('profile_manage:RESPONSE-->', response)
 
+        if operation == 'toggle_full_history':
+            for field in all_users:
+                if(vk_id == field.id_vk):
+                    Vkuser.objects.filter(id_vk=vk_id).update(
+                        is_full_history=not field.is_full_history)
+            response = {'RESPONSE': 'TOGGLE_IS_FULL_HISTORY',
+                        'PAYLOAD': not field.is_full_history}
+        logger('profile_manage:RESPONSE-->', response)
+
         # if operation == 'history_delete_exact_month':
         #     for field in history:
         #         if (vk_id == field.id_vk and month == ???):
