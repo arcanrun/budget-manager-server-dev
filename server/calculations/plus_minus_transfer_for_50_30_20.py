@@ -103,11 +103,14 @@ def plus_minus_transfer_for_50_30_20(request):
                 if operation == 'transfer':
                     transfer_to = str(req['transfer_to'])
 
-                    costsObject[typeCost]['value'] = round(
-                        costsObject[typeCost]['value'] - value, 2)
+                    costsObject[typeCost]['tempMonth'] = round(
+                        costsObject[typeCost]['tempMonth'] - value, 2)
 
-                    costsObject[transfer_to]['value'] = round(
-                        costsObject[transfer_to]['value'] + value, 2)
+                    costsObject[transfer_to]['tempMonth'] = round(
+                        costsObject[transfer_to]['tempMonth'] + value, 2)
+
+                    if costsObject[transfer_to]['tempMonth'] > costsObject[transfer_to]['value']:
+                        costsObject[transfer_to]['value'] = costsObject[transfer_to]['tempMonth']
 
                     calc = make_calculations(
                         json.dumps(costsObject["common"]),  json.dumps(costsObject["fun"]),  json.dumps(costsObject["invest"]), field.days_to_payday, field.budget)
