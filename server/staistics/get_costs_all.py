@@ -48,7 +48,7 @@ def get_costs_all(request):
                                 days_to_payday=daysToPayday_check)
 
                         resArr = make_calculations_full(
-                            field.common, field.fun, field.invest, daysToPayday_check,  field.budget)
+                            field.common, field.fun, field.invest, daysToPayday_check,  field.budget, False)
 
                         Vkuser.objects.filter(id_vk=vk_id).update(
                             common=resArr[0], fun=resArr[1], invest=resArr[2])

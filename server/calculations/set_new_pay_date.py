@@ -51,8 +51,12 @@ def set_new_pay_date(request):
 
                 print('3)', new_days_to_payday)
 
-                resArr = make_calculations_full(
-                    field.common, field.fun, field.invest, new_days_to_payday,  field.budget)
+                if not field.pay_day:
+                    resArr = make_calculations_full(
+                        field.common, field.fun, field.invest, new_days_to_payday,  field.budget)
+                else:
+                    resArr = make_calculations_full(
+                        field.common, field.fun, field.invest, new_days_to_payday,  field.budget, False)
 
                 Vkuser.objects.filter(id_vk=vk_id).update(
                     pay_day=pay_day, days_to_payday=new_days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2])
