@@ -9,9 +9,14 @@ import json
 
 costsPattern = json.dumps({
     "value": "",
+    "tempMonth": "",
     "maxToday": "",
     "temp": ""
 })
+
+
+def upgrate_to_new_version():
+    pass
 
 
 def logger(title: str, query: dict):
@@ -81,9 +86,13 @@ def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budge
     funObject = json.loads(filed_fun)
     investObject = json.loads(filed_invest)
 
-    common = commonObject['value']
-    fun = funObject['value']
-    invest = investObject['value']
+    # common = commonObject['value']
+    # fun = funObject['value']
+    # invest = investObject['value']
+
+    common = commonObject['tempMonth']
+    fun = funObject['tempMonth']
+    invest = investObject['tempMonth']
 
     if daysToPayday == 0:
         commonObject["maxToday"] = commonObject['value']
@@ -108,7 +117,7 @@ def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budge
     return [commonObjectJSON, funObjectJSON, investObjectJSON]
 
 
-def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, budget):
+def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, budget, is_calc_value=True):
 
     daysToPayday = int(daysToPayday)
 
@@ -116,14 +125,20 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
+    if is_calc_value:
+        commonObject['value'] = round((float(budget) * 0.5), 2)
+        funObject['value'] = round((float(budget) * 0.3), 2)
+        investObject['value'] = round((float(budget) * 0.2), 2)
 
-    commonObject['value'] = round((float(budget) * 0.5), 2)
-    funObject['value'] = round((float(budget) * 0.3), 2)
-    investObject['value'] = round((float(budget) * 0.2), 2)
+        commonObject['tempMonth'] = round((float(budget) * 0.5), 2)
+        funObject['tempMonth'] = round((float(budget) * 0.3), 2)
+        investObject['tempMonth'] = round((float(budget) * 0.2), 2)
+
     if daysToPayday == 0:
         commonObject["maxToday"] = commonObject['value']
         funObject["maxToday"] = funObject['value']
         investObject["maxToday"] = investObject['value']
+
     else:
         commonObject["maxToday"] = round((
             float(budget) * 0.5) / daysToPayday, 2)

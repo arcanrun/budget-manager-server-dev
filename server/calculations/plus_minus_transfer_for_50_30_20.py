@@ -49,16 +49,26 @@ def plus_minus_transfer_for_50_30_20(request):
                 costsObject["fun"] = json.loads(field.fun)
                 costsObject["invest"] = json.loads(field.invest)
 
+                # if not 'tempMonth' in costsObject['common']:
+                #     costsObject["common"]["tempMonth"] = costsObject["common"]["value"]
+                #     costsObject["fun"]["tempMonth"] = costsObject["fun"]["value"]
+                #     costsObject["invest"]["tempMonth"] = costsObject["invest"]["value"]
+
                 if operation == 'plus':
 
                     newBudget = float(field.budget) + value
-                    costsObject[typeCost]['value'] = round(
-                        costsObject[typeCost]['value'] + value, 2)
+
                     costsObject[typeCost]['temp'] = round(
                         costsObject[typeCost]['temp'] + value, 2)
 
+                    costsObject[typeCost]['tempMonth'] = round(
+                        costsObject[typeCost]['tempMonth'] + value, 2)
+
                     if (costsObject[typeCost]['temp'] > costsObject[typeCost]['maxToday']):
                         costsObject[typeCost]['maxToday'] = costsObject[typeCost]['temp']
+
+                    if (costsObject[typeCost]['tempMonth'] > costsObject[typeCost]['value']):
+                        costsObject[typeCost]['value'] = costsObject[typeCost]['tempMonth']
 
                     # from dict to json
                     costsObject['common'] = json.dumps(costsObject['common'])
@@ -66,28 +76,8 @@ def plus_minus_transfer_for_50_30_20(request):
                     costsObject['invest'] = json.dumps(costsObject['invest'])
 
                 if operation == 'minus':
-                    res = costsObject[typeCost]['value'] = round(
-                        costsObject[typeCost]['value'] - value, 2)
-
-                    # if res < 0:
-                    #     if typeCost == 'common' and (costsObject['fun']['value'] - value) > 0 or typeCost == 'invest' and (costsObject['fun']['value'] - value) > 0:
-                    #         costsObject['fun']['value'] = round(
-                    #             costsObject['fun']['value'] - value, 2)
-                    #     elif typeCost == 'common' and (costsObject['fun']['value'] - value) < 0:
-                    #         costsObject['invest']['value'] = round(
-                    #             costsObject['invest']['value'] - value, 2)
-                    #     elif typeCost == 'fun' and (costsObject['common']['value'] - value) > 0:
-                    #         costsObject['common']['value'] = round(
-                    #             costsObject['common']['value'] - value, 2)
-                    #     elif typeCost == 'fun' and (costsObject['common']['value'] - value) < 0:
-                    #         costsObject['invest']['value'] = round(
-                    #             costsObject['invest']['value'] - value, 2)
-                    #     elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0:
-                    #         costsObject['common']['value'] = round(
-                    #             costsObject['common']['value'] - value, 2)
-                    #     elif typeCost == 'invest' and (costsObject['fun']['value'] - value) < 0 and (costsObject['common']['value'] - value) < 0:
-                    #         costsObject['fun']['value'] = round(
-                    #             costsObject['fun']['value'] - value, 2)
+                    res = costsObject[typeCost]['tempMonth'] = round(
+                        costsObject[typeCost]['tempMonth'] - value, 2)
 
                     newBudget = float(field.budget) - value
 
@@ -99,7 +89,7 @@ def plus_minus_transfer_for_50_30_20(request):
                         costsObject['fun'] = resArr[1]
                         costsObject['invest'] = resArr[2]
                     else:
-                        costsObject[typeCost]['value'] = res
+                        costsObject[typeCost]['tempMonth'] = res
                         costsObject[typeCost]['temp'] = round(
                             costsObject[typeCost]['temp'] - value, 2)
 
