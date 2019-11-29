@@ -125,6 +125,7 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
     commonObject = json.loads(field_common)
     funObject = json.loads(filed_fun)
     investObject = json.loads(file_invest)
+
     if is_calc_value:
         commonObject['value'] = round((float(budget) * 0.5), 2)
         funObject['value'] = round((float(budget) * 0.3), 2)
