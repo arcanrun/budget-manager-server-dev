@@ -77,7 +77,7 @@ def next_pay_day(current_pay_day):
 
 
 def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budget):
-    """difference between make_calcualtions and make_caculations_full 
+    """difference between make_calcualtions and make_caculations_full
     IS that make_calculations is for temp costs only and FULL is for relodaing all"""
     daysToPayday = int(daysToPayday)
 
@@ -95,16 +95,23 @@ def make_calculations(field_common, filed_fun, filed_invest, daysToPayday, budge
     invest = investObject['tempMonth']
 
     if daysToPayday == 0:
-        commonObject["maxToday"] = commonObject['value']
-        funObject["maxToday"] = funObject['value']
-        investObject["maxToday"] = investObject['value']
+        commonObject["maxToday"] = commonObject['tempMonth']
+        funObject["maxToday"] = funObject['tempMonth']
+        investObject["maxToday"] = investObject['tempMonth']
     else:
-        commonObject["maxToday"] = round((
-            float(common)) / daysToPayday, 2)
-        funObject["maxToday"] = round((
-            float(fun)) / daysToPayday, 2)
-        investObject["maxToday"] = round((
-            float(invest) * 0.2) / daysToPayday, 2)
+        # commonObject["maxToday"] = round((
+        #     float(common)) / daysToPayday, 2)
+        # funObject["maxToday"] = round((
+        #     float(fun)) / daysToPayday, 2)
+        # investObject["maxToday"] = round((
+        #     float(invest) * 0.2) / daysToPayday, 2)
+
+        commonObject["maxToday"] = round(
+            float(commonObject['tempMonth']) / daysToPayday, 2)
+        funObject["maxToday"] = round(
+            float(funObject['tempMonth']) / daysToPayday, 2)
+        investObject["maxToday"] = round(
+            float(investObject['tempMonth']) / daysToPayday, 2)
 
     commonObject["temp"] = commonObject["maxToday"]
     funObject["temp"] = funObject["maxToday"]
@@ -136,17 +143,23 @@ def make_calculations_full(field_common, filed_fun, file_invest, daysToPayday, b
         investObject['tempMonth'] = round((float(budget) * 0.2), 2)
 
     if daysToPayday == 0:
-        commonObject["maxToday"] = commonObject['value']
-        funObject["maxToday"] = funObject['value']
-        investObject["maxToday"] = investObject['value']
+        commonObject["maxToday"] = commonObject['tempMonth']
+        funObject["maxToday"] = funObject['tempMonth']
+        investObject["maxToday"] = investObject['tempMonth']
 
     else:
-        commonObject["maxToday"] = round((
-            float(budget) * 0.5) / daysToPayday, 2)
-        funObject["maxToday"] = round((
-            float(budget) * 0.3) / daysToPayday, 2)
-        investObject["maxToday"] = round((
-            float(budget) * 0.2) / daysToPayday, 2)
+        # commonObject["maxToday"] = round((
+        #     float(budget) * 0.5) / daysToPayday, 2)
+        # funObject["maxToday"] = round((
+        #     float(budget) * 0.3) / daysToPayday, 2)
+        # investObject["maxToday"] = round((
+        #     float(budget) * 0.2) / daysToPayday, 2)
+        commonObject["maxToday"] = round(
+            float(commonObject['tempMonth']) / daysToPayday, 2)
+        funObject["maxToday"] = round(
+            float(funObject['tempMonth']) / daysToPayday, 2)
+        investObject["maxToday"] = round(
+            float(investObject['tempMonth']) / daysToPayday, 2)
 
     commonObject["temp"] = commonObject["maxToday"]
     funObject["temp"] = funObject["maxToday"]
