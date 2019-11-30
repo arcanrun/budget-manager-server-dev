@@ -64,8 +64,14 @@ def plus_minus_transfer_for_50_30_20(request):
                     costsObject[typeCost]['tempMonth'] = round(
                         costsObject[typeCost]['tempMonth'] + value, 2)
 
-                    if (costsObject[typeCost]['temp'] > costsObject[typeCost]['maxToday']):
-                        costsObject[typeCost]['maxToday'] = costsObject[typeCost]['temp']
+                    if costsObject[typeCost]['temp'] > costsObject[typeCost]['maxToday']:
+                        costsObject[typeCost]['maxToday'] = costsObject[typeCost]['tempMonth'] / \
+                            float(field.days_to_payday)
+                        costsObject[typeCost]['temp'] = costsObject[typeCost]['maxToday']
+
+                    # else:
+                    #     costsObject[typeCost]['temp'] = round(
+                    #         costsObject[typeCost]['temp'] + value, 2)
 
                     if (costsObject[typeCost]['tempMonth'] > costsObject[typeCost]['value']):
                         costsObject[typeCost]['value'] = costsObject[typeCost]['tempMonth']
