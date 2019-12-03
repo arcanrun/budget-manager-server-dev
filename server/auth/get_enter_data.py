@@ -26,7 +26,7 @@ def get_enter_data(request):
     logger('get_enter_data:RECIVED', req)
 
     try:
-        pay_day = datetime.datetime.strptime(
+        datetime.datetime.strptime(
             pay_day, "%Y-%m-%dT%H:%M:%S.%fZ")
     except:
         response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
@@ -38,6 +38,25 @@ def get_enter_data(request):
             return JsonResponse(response)
         budget = round(float(req['budget']), 2)
 
+        all_users = Vkuser.objects.all()
+        for field in all_users:
+            if (vk_id == field.id_vk):
+                pay_day = datetime.datetime.strptime(
+                    str(pay_day), "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(hours=field.timezone)
+                to_day = datetime.datetime.now()
+                to_day_with_timezone = to_day + timedelta(hours=field.timezone)
+                new_days_to_payday = pay_day - to_day_with_timezone
+                new_days_to_payday = new_days_to_payday.days
+                if(new_days_to_payday < 0):
+                    return JsonResponse({"RESPONSE": "BAD_REQUEST"})
+
+                resArr = make_calculations_full(
+                    field.common, field.fun, field.invest, new_days_to_payday, budget)
+
+                Vkuser.objects.filter(id_vk=vk_id).update(
+                    pay_day=pay_day, days_to_payday=new_days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2], budget=budget)
+
+                break
         response = {'PAYLOAD': 'ALL GOOD'}
         return JsonResponse(response)
     else:

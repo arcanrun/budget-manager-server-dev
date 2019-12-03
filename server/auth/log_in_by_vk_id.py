@@ -10,7 +10,7 @@ from urllib.parse import urlparse, parse_qsl, urlencode
 from django.http import JsonResponse
 from ..models import Vkuser, History
 
-from ..helpers import get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
+from ..helpers import logger, get_updated_data, make_calculations, make_calculations_full,  costsPattern, history_saver, next_pay_day, get_id_from_vk_params, is_user_registered
 
 from ..auth.chcek_sign import is_valid, insert_client_sign, make_dict_from_query
 from .check_origin import is_allowed_origin
@@ -23,7 +23,7 @@ def log_in_by_vk_id(request):
         })
 
     req = json.loads(str(request.body, encoding='utf-8'))
-    print('[log_in_by_vk_id:RECIVED]-->', req)
+    logger('[log_in_by_vk_id:RECIVED]', req)
 
     vk_id = get_id_from_vk_params(str(req['params']))
     query_params = make_dict_from_query(str(req['params']))
@@ -45,6 +45,8 @@ def log_in_by_vk_id(request):
                 response['PAYLOAD']['is_costom_dark_theme'] = field.is_costom_dark_theme
                 response['PAYLOAD']['is_full_history'] = field.is_full_history
                 response['PAYLOAD']['budget'] = field.budget
+                response['PAYLOAD']['currency'] = field.currency
+                response['PAYLOAD']['pay_day'] = field.pay_day
 
                 with_time_zone = datetime.datetime.strptime(
                     field.register_date, '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=field.timezone)
@@ -54,8 +56,8 @@ def log_in_by_vk_id(request):
                     print(type(field.timezone), type(timezone))
                     Vkuser.objects.filter(id_vk=vk_id).update(
                         timezone=timezone)
-        print('[log_in_by_vk_id:RESPONSE]-->', response)
+        logger('[log_in_by_vk_id:RESPONSE]', response)
         return JsonResponse(response)
 
-    print('[log_in_by_vk_id:RESPONSE]-->', response)
+    logger('[log_in_by_vk_id:RESPONSE]', response)
     return JsonResponse(response)
