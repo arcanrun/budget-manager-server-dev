@@ -31,7 +31,6 @@ def get_enter_data(request):
     except:
         response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
         return JsonResponse(response)
-
     if is_valid(query=query_params, secret=client_secret) and len(currency) == 3 and currency in currency_map:
         if not is_valid_number(req['budget']):
             response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
@@ -57,7 +56,9 @@ def get_enter_data(request):
                     pay_day=pay_day, days_to_payday=new_days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2], budget=budget)
 
                 break
-        response = {'PAYLOAD': 'ALL GOOD'}
+        response = get_updated_data(vk_id)
+        logger('get_enter_data:RESPONSE', response)
+
         return JsonResponse(response)
     else:
         return JsonResponse(response)
