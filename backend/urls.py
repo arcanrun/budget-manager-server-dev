@@ -35,6 +35,7 @@ urlpatterns = [
     path('tutorial-state/', views.tutorial_state),  # done
     path('vk_client_theme/', views.toggle_vk_theme),  # done
     path('custom_dark_theme/', views.toggle_custom_dark_theme),  # done
+    path('enter-data/', views.enter_data),  # done
     path('/', include('rest_framework.urls'))
 
 ]

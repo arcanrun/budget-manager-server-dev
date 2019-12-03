@@ -14,6 +14,7 @@ from .calculations.plus_minus_transfer_for_50_30_20 import plus_minus_transfer_f
 
 from .auth.log_in_by_vk_id import log_in_by_vk_id
 from .auth.sign_up_by_vk_id import sign_up_by_vk_id
+from .auth.get_enter_data import get_enter_data
 
 from .staistics.get_costs_all import get_costs_all
 from .staistics.get_history import get_history
@@ -81,3 +82,7 @@ def toggle_vk_theme(request):
 
 def toggle_custom_dark_theme(request):
     return toggle_dark_theme(request)
+
+
+def enter_data(request):
+    return get_enter_data(request)
