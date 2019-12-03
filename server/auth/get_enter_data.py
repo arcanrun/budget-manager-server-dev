@@ -28,10 +28,17 @@ def get_enter_data(request):
     try:
         datetime.datetime.strptime(
             pay_day, "%Y-%m-%dT%H:%M:%S.%fZ")
+        print('1----', pay_day)
+
     except:
         response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
+        print('2----', pay_day)
         return JsonResponse(response)
+
+    print('3----')
+
     if is_valid(query=query_params, secret=client_secret) and len(currency) == 3 and currency in currency_map:
+
         if not is_valid_number(req['budget']):
             response = {'RESPONSE': 'VALUE_ERROR', 'PAYLOAD': {}}
             return JsonResponse(response)
@@ -39,16 +46,24 @@ def get_enter_data(request):
 
         all_users = Vkuser.objects.all()
         for field in all_users:
+
             if (vk_id == field.id_vk):
                 pay_day = datetime.datetime.strptime(
                     str(pay_day), "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(hours=field.timezone)
                 to_day = datetime.datetime.now()
+
                 to_day_with_timezone = to_day + timedelta(hours=field.timezone)
+                to_day_with_timezone = datetime.date.strftime(
+                    to_day_with_timezone, '%Y-%m-%d')
+
+                to_day_with_timezone = datetime.datetime.strptime(
+                    to_day_with_timezone, '%Y-%m-%d')
+
                 new_days_to_payday = pay_day - to_day_with_timezone
                 new_days_to_payday = new_days_to_payday.days
+
                 if(new_days_to_payday < 0):
                     return JsonResponse({"RESPONSE": "BAD_REQUEST"})
-
                 resArr = make_calculations_full(
                     field.common, field.fun, field.invest, new_days_to_payday, budget)
 

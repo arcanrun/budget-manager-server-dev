@@ -12,7 +12,7 @@ class History(models.Model):
     currency = models.TextField(max_length=3, blank=True, default='RUB')
 
     def __str__(self):
-        return '%s - %s -  %s - %s - %s' % (self.id_vk, self.date, self.operation, self.value, self.type_costs, self.currency)
+        return '%s - %s -  %s - %s - %s - %s' % (self.id_vk, self.date, self.operation, self.value, self.type_costs, self.currency)
 
 
 class Vkuser(models.Model):
