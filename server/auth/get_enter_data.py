@@ -48,16 +48,25 @@ def get_enter_data(request):
         for field in all_users:
 
             if (vk_id == field.id_vk):
+
                 pay_day = datetime.datetime.strptime(
                     str(pay_day), "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(hours=field.timezone)
-                to_day = datetime.datetime.now()
+
+                to_day = datetime.datetime.now() + timedelta(hours=field.timezone)
 
                 to_day_with_timezone = to_day + timedelta(hours=field.timezone)
+
                 to_day_with_timezone = datetime.date.strftime(
                     to_day_with_timezone, '%Y-%m-%d')
 
                 to_day_with_timezone = datetime.datetime.strptime(
                     to_day_with_timezone, '%Y-%m-%d')
+
+                pay_day = datetime.date.strftime(
+                    pay_day, '%Y-%m-%d')
+
+                pay_day = datetime.datetime.strptime(
+                    pay_day, '%Y-%m-%d')
 
                 new_days_to_payday = pay_day - to_day_with_timezone
                 new_days_to_payday = new_days_to_payday.days
@@ -68,10 +77,11 @@ def get_enter_data(request):
                     field.common, field.fun, field.invest, new_days_to_payday, budget)
 
                 Vkuser.objects.filter(id_vk=vk_id).update(
-                    pay_day=pay_day, days_to_payday=new_days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2], budget=budget)
+                    pay_day=pay_day, days_to_payday=new_days_to_payday, common=resArr[0], fun=resArr[1], invest=resArr[2], budget=budget, currency=currency)
 
                 break
         response = get_updated_data(vk_id)
+
         logger('get_enter_data:RESPONSE', response)
 
         return JsonResponse(response)
